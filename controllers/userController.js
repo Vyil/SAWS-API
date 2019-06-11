@@ -5,7 +5,7 @@ const User = require('../models/user');
 module.exports = {
 
     createNewUser(req,res){
-        console.log('CreateNewUser called')
+        console.log('CreateNewUser called ')
 
         User.findOne({
             username: req.body.username
