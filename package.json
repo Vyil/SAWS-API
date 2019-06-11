@@ -12,14 +12,14 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set NODE_ENV=production&& node server.js"
+    "test": "./node_modules/.bin/mocha --reporter spec --exit",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Vyil/SAWS-API.git"
   },
-  "author": "",
+  "author": "SAWSTeam",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Vyil/SAWS-API/issues"
