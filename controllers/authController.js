@@ -22,7 +22,7 @@ module.exports = {
                 let token = auth.encodeToken(result._id);
                 let resultObject = {
                     "token":token,
-                    "Message:":"Succesful login for user: "+result.username
+                    "message:":"Succesful login for user: "+result.username
                 }
                 res.status(200).json(resultObject).end();
             }else {
