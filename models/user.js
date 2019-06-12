@@ -1,6 +1,5 @@
 const mongoose = require('../database/mongodb');
 const Schema = mongoose.Schema;
-const image = require('../img/Icon')
 
 const UserSchema = new Schema ({
     username: {
@@ -24,7 +23,7 @@ const UserSchema = new Schema ({
     iconurl: {
         type: String,
         required: [true, 'Icon is required'],
-        default: image
+        default: '../img/Icon.png'
     }
 })
 
