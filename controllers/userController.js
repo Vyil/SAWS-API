@@ -5,7 +5,7 @@ const User = require('../models/user');
 module.exports = {
 
     createNewUser(req,res){
-        console.log('CreateNewUser called ')
+        console.log('CreateNewUser called ');
 
         User.findOne({
             username: req.body.username
@@ -23,7 +23,7 @@ module.exports = {
                         return;
                     })
                     .catch(err => {
-                        res.status(400).send(new apiError(400, 'Error occured: ' + err)).end();
+                        res.status(400).send(new apiError(400, 'Error occurred: ' + err)).end();
                         return;
                     });
             }
