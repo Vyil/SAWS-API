@@ -1,4 +1,5 @@
 const express = require('express');
+const ApiError = require('../models/ApiError');
 const routes = express.Router();
 
 //Route paths
@@ -13,9 +14,11 @@ routes.use('/',auth_routes);
 routes.use('/',user_routes);
 
 //Catch 404's 
-routes.get('*', function (req, res) {
-    res.status('404').json("Page not found").end()
-})
+// Postprocessing; catch all non-existing endpoint requests
+routes.use('*', function (req, res, next) {
+    const error = new ApiError('Non-existing endpoint', 404);
+    next(error);
+});
 
 
 module.exports = routes;
