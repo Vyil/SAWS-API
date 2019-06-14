@@ -5,7 +5,6 @@ class ApiError {
         this.code = code;
         this.datetime = new Date().toISOString()
     }
-
 }
 
 module.exports = ApiError;
