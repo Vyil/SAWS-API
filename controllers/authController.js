@@ -1,5 +1,5 @@
 const auth = require('../authentication/authentication');
-const apiError = require('../models/apiError');
+const ApiError = require('../models/ApiError');
 const User = require('../models/user');
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
         let password = req.body.password;
 
         if (!username || !password) {
-            res.status(412).json(new apiError(412, 'Missing login parameters')).end();
+            res.status(412).json(new ApiError('Missing login parameters', 412)).end();
             return
         }
 
@@ -30,7 +30,7 @@ module.exports = {
             }
         })
         .catch(err=>{
-            res.status(500).send(new apiError(500,'Error occurred: '+err)).end();
+            res.status(500).send(new ApiError('Error occurred: '+err, 500)).end();
         })
     }
 }
