@@ -49,7 +49,11 @@ module.exports = (io) => {
 
         Streams.findOne({ username: stream, live:true })
             .then(rslt => {
-                streamID = rslt._id
+                if(!rslt){
+                    return false;
+                } else {
+                    streamID = rslt._id
+                }                
             })
             .then(
                 User.findOne({ username: message.username })
