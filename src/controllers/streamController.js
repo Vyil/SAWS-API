@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Streams = require("../models/streams")
+const Streams = require("../models/streams");
+const User = require('../models/user');
 const ApiError = require('../models/ApiError');
 
 
@@ -29,15 +30,22 @@ module.exports = {
     },
 
     setupInitialStream(req, res) {
-        const newStream = new Streams({
-            date: new Date(req.body.date),
+        let newStream = new Streams({
+            date: new Date(Date.now()),
             live: true,
-            uuid: req.body.uuid
+            uuid: req.body.uuid,
+            username:''
         })
-        newStream.save()
-            .then(result => {
-                res.status(200).json({ message: 'Stream created: ' + result }).end()
-                return;
+
+        User.findOne({ uuid: req.body.uuid })
+            .then(rslt => {
+                newStream.username = rslt.unsername;
+                newStream.save()
+                    .then(result => {
+                        console.log(newStream._id+' '+newStream.username+' '+result)
+                        res.status(200).json({ message: 'Stream created: ' + result }).end()
+                        return;
+                    })
             })
             .catch(err => {
                 res.status(500).json(new ApiError(err, 500)).end()
@@ -59,15 +67,15 @@ module.exports = {
             })
     },
 
-    getLiveStreams(req,res){
-        Streams.find({live:true})
-        .then(result=>{
-            res.status(200).json(result).end()
-            return;
-        })
-        .catch(err =>{
-            res.status(500).json(new ApiError(err,500)).end()
-            return;
-        })
+    getLiveStreams(req, res) {
+        Streams.find({ live: true })
+            .then(result => {
+                res.status(200).json(result).end()
+                return;
+            })
+            .catch(err => {
+                res.status(500).json(new ApiError(err, 500)).end()
+                return;
+            })
     }
 }

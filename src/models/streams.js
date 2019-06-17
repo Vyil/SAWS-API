@@ -23,6 +23,9 @@ const streamSchema = new mongoose.Schema({
     uuid: {
         type: String,
         required: true,
+    },
+    username:{
+        type: String
     }
 });
 
