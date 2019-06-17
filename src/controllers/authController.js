@@ -11,7 +11,7 @@ const filestream = require('fs');
 
 // Import relevant keys
 const publicKey = filestream.readFileSync(__dirname + '/cert/public.key');
-const privateKey = filestream.readFileSync(__dirname + '/cert/private.key');
+const privateKeyPem = filestream.readFileSync(__dirname + '/cert/private.key');
 
 module.exports = {
     //Authentication controller only login authentication
@@ -87,16 +87,22 @@ module.exports = {
         //console.log("Passphrase: " + crypto.publicEncrypt(publicKey, Buffer.from('v983v4b73894478', 'utf8')).toString('base64'));
 
         try {
-            let username, password, uuid, passphrase, hash;
+            let username, password, uuid, key, iv, hash;
+            let privateKey = pki.privateKeyFromPem(privateKeyPem);
             try {
-                username = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.username, 'base64'));
-                password = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.password, 'base64'));
-                uuid = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.uuid, 'base64'));
-                passphrase = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.passphrase, 'base64'));
+                //username = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.username, 'base64'));
+                //password = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.password, 'base64'));
+                //uuid = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.uuid, 'base64'));
+                key = privateKey.decrypt(forge.util.decode64(request.body.payload.key));
+                //key = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.key, 'base64'));
+                //iv = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.iv, 'base64'));
+
             } catch (decrypterror) {
                 console.log(decrypterror);
                 // TODO - decrypt error
             }
+
+            console.log(key);
 
             User.findOne({
                 username: username,
@@ -104,8 +110,8 @@ module.exports = {
             })
                 .then(result => {
                     // TODO - Check username/password combo in database
-                    console.log(result);
-                    response.status(200).json({}).end();
+                    //console.log(result);
+                    //response.status(200).json({}).end();
 
                     let keypair = pki.rsa.generateKeyPair(2048);
                     let certificate = pki.createCertificate();
@@ -139,7 +145,9 @@ module.exports = {
                     certificate.setIssuer(attributes);
                     certificate.sign(keypair.privateKey);
 
-                    let pemCertificate = pki.certificateToPem(certificate);
+                    let encrypted = auth.encryptAES('test', key, iv);
+                    console.log(auth.decryptAES(encrypted, key, iv));
+                    //let pemCertificate = pki.certificateToPem(certificate);
                     //console.log(pemCertificate);
                     //console.log(pki.publicKeyToPem(keypair.publicKey));
 
@@ -166,7 +174,7 @@ module.exports = {
 
 
         } catch (error) {
-            // TODO - generic error
+            next(new ApiError(error, 500));
         }
 
     }
