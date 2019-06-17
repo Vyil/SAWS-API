@@ -6,7 +6,7 @@ module.exports = (io) =>{
         client.join(client.handshake.query.stream)
         client.on('new-message',(msg)=>{
             console.log('new-message = '+msg)
-            receivedPath.to(client.handshake.query.stream).emit('MESSAGE'+msg)
+            receivedPath.to(client.handshake.query.stream).emit('MESSAGE',msg)
         })
         client.on('disconnect',()=>{
             console.log('Client disconnected')
