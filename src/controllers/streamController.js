@@ -29,7 +29,10 @@ module.exports = {
     },
 
     setupInitialStream(req,res){
-        const newStream = new Streams(req.body,{})
+        const newStream = new Streams({
+            date: new Date(req.body.date),
+            uuid: req.body.uuid
+        })
         console.log(req.body)
         newStream.save()
         .then(result =>{
