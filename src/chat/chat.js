@@ -38,7 +38,7 @@ module.exports = (io) =>{
             .then((stream)=>{
                 viewers = stream.Viewers
                 viewers--;
-                Stream.update({
+                Streams.update({
                     Viewers : viewers
                 })
             })
@@ -49,7 +49,7 @@ module.exports = (io) =>{
         User.findOne({username:message.username})
         .then(result=>{
             newMessage = new Message({
-                content:message.content,
+                content:message.message,
                 stream:stream._id,
                 user:result._id
             })
