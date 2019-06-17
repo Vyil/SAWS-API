@@ -40,43 +40,32 @@ module.exports = {
 
     },
 
-    test(request, response, next) {
+    login(req,res){
+        console.log('Login called');
 
-        try {
-            // Request uniform assertions
-            const body = request.body;
-            assert(typeof(request.body) === 'object', 'Request body must be of type object');
-            assert(typeof(request.body.payload) === 'object', 'Payload must be of type object');
-            assert(body.hash, 'Hash is missing from body');
-            assert(typeof(body.hash) === 'string', 'Hash property must be of type string');
+        let username = req.body.username;
+        let password = req.body.password;
 
-            // Request specific assertions
-            const payload = request.body.payload;
-            assert(payload.prime, 'Prime is missing from body');
-            assert(payload.generator, 'Generator is missing from body');
-            assert(payload.key, 'Key is missing from body');
-
-            assert(typeof(payload.prime) === 'string', 'Prime property must be of type string');
-            assert(typeof(payload.generator) === 'string', 'Generator property must be of type string');
-            assert(typeof(payload.key) === 'string', 'Key property must be of type string');
-        } catch(error) {
-            next(new ApiError(error.message, 412));
+        if (!username || !password) {
+            res.status(412).json(new ApiError('Missing login parameters', 412)).end();
+            return
         }
-        console.log('Session ID: ' + request.session.id);
-        console.log('Session Secret: ' + request.session.secret);
 
-        const prime = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.prime, 'base64'));
-        const generator = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.generator, 'base64'));
-        const key = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.key, 'base64'));
-
-        const serverDiffieHellman = crypto.createDiffieHellman(prime, generator);
-        const serverKey = serverDiffieHellman.generateKeys();
-        const secret = serverDiffieHellman.computeSecret(key);
-
-        response.status(200).json({
-            key: serverKey.toString('base64'),
-            secret: secret.toString('base64')
-        }).end();
-
+        User.findOne({username:username})
+            .then(result=>{
+                if(result.password === password){
+                    let token = auth.encodeToken(result._id);
+                    let resultObject = {
+                        "token":token,
+                        "message:":"Successful login for user: "+result.username
+                    };
+                    res.status(200).json(resultObject).end();
+                }else {
+                    res.status(401).json({message:'Rejected'}).end();
+                }
+            })
+            .catch(err=>{
+                res.status(500).send(new ApiError('Error occurred: '+err, 500)).end();
+            })
     }
 };

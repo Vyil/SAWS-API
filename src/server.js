@@ -35,7 +35,7 @@ app.use('/api',routes);
 
 // Catch-all error handlers
 app.use((err, req, res, next) => {
-    //console.log(chalk.red(err));
+    console.log(chalk.red('[ERROR] (' + err.statusCode + ') ' + err.message));
     res.status((err.code || 404)).json(err).end();
 });
 

@@ -5,7 +5,7 @@ const jwt = require('jwt-simple');
 // Encode (from id to token)
 function encodeToken(id) {
     const payload = {
-        exp: moment().add(10, 'days').unix(),
+        exp: moment().add(2, 'days').unix(),
         iat: moment().unix(),
         sub: id
     };
