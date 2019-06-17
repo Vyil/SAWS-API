@@ -8,12 +8,12 @@ const streamSchema = new mongoose.Schema({
     },
     length:{
         type: Date,
-        required:true,
+        required:false,
         minlength: 1
     },
     viewers: {
         type: Number,
-        required: true,
+        required: false,
         minlength: 1
     },
     live: {
@@ -21,11 +21,6 @@ const streamSchema = new mongoose.Schema({
         required: false,
         minlength: 1,
         default: false
-    },
-    port: {
-        type: Number,
-        required: false,
-        minLength: 1,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
