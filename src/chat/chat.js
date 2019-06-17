@@ -47,29 +47,33 @@ module.exports = (io) => {
     function saveMessageDB(stream, message) {
         let streamID;
 
-        Streams.findOne({ username: stream })
+        Streams.findOne({ username: stream, live:true })
             .then(rslt => {
                 streamID = rslt._id
             })
-
-        User.findOne({ username: message.username })
-            .then(result => {
-                newMessage = new Message({
-                    content: message.message,
-                    stream: streamID,
-                    user: result._id
+            .then(
+                User.findOne({ username: message.username })
+                .then(result => {
+                    newMessage = new Message({
+                        content: message.message,
+                        stream: streamID,
+                        user: result._id
+                    })
+                    newMessage.save()
+                        .then(rt => {
+                            res.status(200).json({ message: 'Message saved succesfully', rt }).end();
+                            return;
+                        })
+                        .catch(err => {
+                            res.status(500).json(new ApiError(err, 500)).end();
+                            return;
+                        })
                 })
-                newMessage.save()
-                    .then(rt => {
-                        res.status(200).json({ message: 'Message saved succesfully', rt }).end();
-                        return;
-                    })
-                    .catch(err => {
-                        res.status(500).json(new ApiError(err, 500)).end();
-                        return;
-                    })
+            )
+            .catch(err => {
+                res.status(500).json(new ApiError(err, 500)).end();
+                return;
             })
-
     }
 
 }
