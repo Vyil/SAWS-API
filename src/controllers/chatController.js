@@ -3,7 +3,7 @@ const userModel = require("../models/user")
 const ApiError = require('../models/ApiError');
 
 module.exports ={
-    Chat(req,res,next) {
+    SaveChat(req,res,next) {
         userModel.findOne({ username: req.username}, function(err, userFound) {
             if(err||userFound == null || userFound == undefined || userFound == ""){
                 return res.json(404).send(new ApiError("Error occured:"  + err, 404)).end();
@@ -22,7 +22,7 @@ module.exports ={
                     if(err){
                         return console.log(err);
                     } else {
-                        const repsone = {response: "Message sent"}
+                        const response = {message: "Message sent"}
                         res.status(200).json(response)
                     }
                 })
