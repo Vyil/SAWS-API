@@ -18,7 +18,7 @@ const http = require('http').Server(app);
 
 //Initialze sockets
 const io = require('socket.io')(http);
-require('./chat/chat')(io)
+require('./chat/chat')(io);
 
 app.use(session({
     secret: "C06429E74D0E5ABDB5"
@@ -41,7 +41,7 @@ app.use('/api',routes);
 
 // Catch-all error handlers
 app.use((err, req, res, next) => {
-    //console.log(chalk.red(err));
+    console.log(chalk.red(err));
     res.status((err.code || 404)).json(err).end();
 });
 

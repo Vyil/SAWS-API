@@ -12,8 +12,8 @@ routes.get('/', function (req, res) {
 });
 
 routes.use('/',auth_routes);
-routes.use('/',user_routes);
-routes.use('/',chat_routes);
+//routes.use('/',user_routes);
+//routes.use('/',chat_routes);
 
 //Catch 404's 
 // Postprocessing; catch all non-existing endpoint requests

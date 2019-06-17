@@ -1,4 +1,4 @@
-const auth = require('../authentication/authentication');
+const auth = require('./authentication');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
 
