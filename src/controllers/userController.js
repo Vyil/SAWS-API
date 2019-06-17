@@ -52,6 +52,14 @@ module.exports = {
         .catch(error => next(new ApiError(error,500)))
     },
 
+    getUser(request,response,next){
+        User.find()
+            .then((user)=>{
+                console.log(user)
+                response.status(200).json(user).end()
+            })
+    },
+
     test(request, response, next) {
 
         try {
