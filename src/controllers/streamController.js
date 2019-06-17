@@ -19,6 +19,19 @@ module.exports = {
         })
 
     },
+    getLiveStreams(req,res,next){
+        Streams.find({"live": true})
+        .populate("User")
+        .then((streams, err) =>{
+            if(err) throw err;
+            res.status(200).json(streams)
+        })
+        .catch ((err) =>{
+            console.log(err);
+            res.status(error).send(new ApiError('Error occured:' + error)).end();
+            return;
+        })
+    },
     getViewerCount(request,response,next){
         console.log('GetViewCount called')
 

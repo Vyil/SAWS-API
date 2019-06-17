@@ -3,6 +3,7 @@ const router = express.Router();
 
 //public routes
 router.get('/chat', showData);
+router.patch('/chatsave',SaveChat)
 
 function showData(){
     console.log('Data= ')
