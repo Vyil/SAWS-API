@@ -10,9 +10,8 @@ module.exports = {
 
         let username = req.body.username;
         let password = req.body.password;
-        let UUID = req.body.UUID;
 
-        if (!username || !password || !UUID) {
+        if (!username || !password) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
             return
         }

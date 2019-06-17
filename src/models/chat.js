@@ -2,21 +2,21 @@ const mongoose = require('../database/mongodb')
 const Schema = mongoose.Schema
 
 const chatSchema = new Schema({
-    Content: {
+    content: {
         type: String,
         required: true,
         minlength: 1
     },
-    Date: {
+    date: {
         type: Date,
         default: Date.now
     },
-    Stream: {
+    stream: {
         type:  mongoose.Schema.Types.ObjectId,
         ref: 'Streams',
         required: true,
     },
-    User: {
+    user: {
         type:mongoose.Schema.Types.ObjectId,
         ref:'Users',
         required: true,

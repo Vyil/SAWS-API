@@ -1,33 +1,33 @@
 const mongoose = require('../database/mongodb')
 
 const streamSchema = new mongoose.Schema({
-    Date: {
+    date: {
         type: Date,
         required: true,
         minlength: 1
     },
-    Length:{
+    length:{
         type: Date,
         required:true,
         minlength: 1
     },
-    Viewers: {
+    viewers: {
         type: Number,
         required: true,
         minlength: 1
     },
-    Live: {
+    live: {
         type: Boolean,
         required: false,
         minlength: 1,
         default: false
     },
-    Port: {
+    port: {
         type: Number,
         required: false,
         minLength: 1,
     },
-    User: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref:"Users",
         required: true,

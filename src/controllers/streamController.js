@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const Stream = require('../models/streams')
 
 module.exports = {
@@ -9,4 +10,27 @@ module.exports = {
                 response.status(200).json(stream.Viewers).end()
             })
     },
+=======
+const mongoose = require('mongoose');
+const Streams = require("../models/streams")
+const ApiError = require('../models/ApiError');
+
+
+module.exports = {
+
+    getStreams(req,res,next){
+        Streams.find()
+        .populate("User")
+        .then((streams, err) =>{
+            if(err) throw err;
+            res.status(200).json(streams)
+        })
+        .catch ((err) =>{
+            console.log(err);
+            res.status(error).send(new ApiError('Error occured:' + error)).end();
+            return;
+        })
+
+    }
+>>>>>>> develop
 }
