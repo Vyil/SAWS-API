@@ -19,8 +19,6 @@ const streamSchema = new mongoose.Schema({
     live: {
         type: Boolean,
         required: false,
-        minlength: 1,
-        default: false
     },
     uuid: {
         type: String,
