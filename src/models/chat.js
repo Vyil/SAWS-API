@@ -2,16 +2,24 @@ const mongoose = require('../database/mongodb')
 const Schema = mongoose.Schema
 
 const chatSchema = new Schema({
-    fristname: {
+    Content: {
         type: String,
-        required: [true, 'firstname is needed']
+        required: true,
+        minlength: 1
     },
-    message: {
-        type: String
-    },
-    created: {
+    Date: {
         type: Date,
         default: Date.now
+    },
+    Stream: {
+        type:  mongoose.Schema.Types.ObjectId,
+        ref: 'Streams',
+        required: true,
+    },
+    User: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Users',
+        required: true,
     }
 
 })
