@@ -2,10 +2,10 @@ module.exports = (io) =>{
 
     const receivedPath = io.of('/chat')
     receivedPath.on('connection',(client)=>{
-        client.join('room-one'/*client.streamURL*/)
+        console.log('client connected: '+client.handshake.query.stream)
+        client.join(client.handshake.query.stream)
         client.on('new-message',(msg)=>{
-            console.log('MESSAGE '+msg+' ')
-            receivedPath.to('room-one').emit('MESSAGE'+msg)
+            receivedPath.to(client.handshake.query.stream).emit('MESSAGE'+msg)
         })
         client.on('disconnect',()=>{
             console.log('Client disconnected')
