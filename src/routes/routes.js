@@ -5,6 +5,7 @@ const routes = express.Router();
 //Route paths
 let auth_routes = require('./auth_routes');
 let user_routes = require('./user_routes');
+let chat_routes = require('./chat_routes');
 
 routes.get('/', function (req, res) {
     res.send('Start (end)point')
@@ -12,6 +13,7 @@ routes.get('/', function (req, res) {
 
 routes.use('/',auth_routes);
 routes.use('/',user_routes);
+routes.use('/',chat_routes);
 
 //Catch 404's 
 // Postprocessing; catch all non-existing endpoint requests
