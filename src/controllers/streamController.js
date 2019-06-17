@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Streams = require("../models/streams");
 const User = require('../models/user');
 const ApiError = require('../models/ApiError');

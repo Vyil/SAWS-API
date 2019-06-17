@@ -1,4 +1,5 @@
 const mongoose = require('../database/mongodb')
+const Schema = mongoose.Schema;
 
 const streamSchema = new mongoose.Schema({
     date: {
@@ -26,7 +27,11 @@ const streamSchema = new mongoose.Schema({
     },
     username:{
         type: String
-    }
+    },
+    messages:[{
+        type: Schema.Types.ObjectId,
+        ref:'Message'
+    }]
 });
 
 const Streams = mongoose.model('Streams', streamSchema);
