@@ -40,7 +40,7 @@ module.exports = {
 
     },
 
-    getUserByUUID(request, response, next){
+    getUserByUUID(req, res){
         console.log('GetUserByUUID called')
 
         User.findOne({
@@ -52,12 +52,31 @@ module.exports = {
         .catch(error => next(new ApiError(error,500)))
     },
 
-    getUser(request,response,next){
-        User.find()
-            .then((user)=>{
-                console.log(user)
-                response.status(200).json(user).end()
+    getUser(req,res){
+        var queryParam= req.query.username;
+
+        //No queryParam = find all
+        if(!queryParam){
+            User.find({})
+            .then(rslt=>{
+                res.status(200).json(rslt).end()
+                return;
             })
+            .catch(err=>{
+                res.status(500).json(new ApiError(err,500)).end()
+                return;
+            })
+        } else {
+        //Query param is find specific
+        User.findOne({username:queryParam})            
+            .then((user)=>{
+                res.status(200).json(user).end()
+                return;
+            })
+            .catch(err=>{
+                res.status(500).json(new ApiError(err,500)).end()
+            })
+        }
     },
 
     test(request, response, next) {
