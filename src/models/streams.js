@@ -22,9 +22,8 @@ const streamSchema = new mongoose.Schema({
         minlength: 1,
         default: false
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Users",
+    uuid: {
+        type: String,
         required: true,
     }
 });
