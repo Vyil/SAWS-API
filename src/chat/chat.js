@@ -60,19 +60,14 @@ module.exports = (io) => {
                         user: result._id
                     })
                     newMessage.save()
-                        .then(rt => {
-                            res.status(200).json({ message: 'Message saved succesfully', rt }).end();
-                            return;
-                        })
+                        .then(rt => {})
                         .catch(err => {
-                            res.status(500).json(new ApiError(err, 500)).end();
-                            return;
+                            console.log(err)
                         })
                 })
             )
             .catch(err => {
-                res.status(500).json(new ApiError(err, 500)).end();
-                return;
+                console.log(err)
             })
     }
 
