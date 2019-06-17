@@ -26,5 +26,18 @@ module.exports = {
             .then((stream)=>{
                 response.status(200).json(stream.Viewers).end()
             })
+    },
+
+    setupInitialStream(req,res){
+        const newStream = new Streams(req.body,{})
+        newStream.save()
+        .then(result =>{
+            res.status(200).json({message:'Stream created: ' + result}).end()
+            return;
+        })
+        .catch(err =>{
+            res.status(500).json({error: err}).end()
+            return;
+        })
     }
 }
