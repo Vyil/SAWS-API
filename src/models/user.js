@@ -26,7 +26,7 @@ const UserSchema = new Schema ({
     iconurl: {
         type: String,
         required: [true, 'Icon is required'],
-        default: '../img/Icon.png'
+        default: 'https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png'
     },
     satoshiAmount: {
         type: Number,
