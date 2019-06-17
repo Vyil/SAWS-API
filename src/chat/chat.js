@@ -11,7 +11,7 @@ module.exports = (io) => {
         console.log('client connected: ' + client.handshake.query.stream)
         client.join(client.handshake.query.stream)
         client.on('new-message', (msg) => {
-            saveMessageDB(client.handshake.query.stream,msg)
+            saveMessageDB(client.handshake.query.stream, msg)
             receivedPath.to(client.handshake.query.stream).emit('MESSAGE', msg)
         })
         client.on('disconnect', () => {
@@ -45,14 +45,18 @@ module.exports = (io) => {
     }
 
     function saveMessageDB(stream, message) {
+        let streamID;
 
         Streams.findOne({ username: stream })
             .then(rslt => {
+                streamID = rslt._id
+            })
+            .then(
                 User.findOne({ username: message.username })
                     .then(result => {
                         newMessage = new Message({
                             content: message.message,
-                            stream: rslt._id,
+                            stream: streamID,
                             user: result._id
                         })
                         newMessage.save()
@@ -65,12 +69,7 @@ module.exports = (io) => {
                                 return;
                             })
                     })
-                    .catch(err => {
-                        res.status(500).json(new ApiError(err, 500)).end();
-                        return;
-                    })
-            })
-
+            )
     }
 
 }
