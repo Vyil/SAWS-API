@@ -27,6 +27,9 @@ const UserSchema = new Schema ({
         type: String,
         required: [true, 'Icon is required'],
         default: '../img/Icon.png'
+    },
+    satoshiAmount: {
+        type: Number,
     }
 })
 
