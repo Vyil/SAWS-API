@@ -30,6 +30,7 @@ module.exports = {
 
     setupInitialStream(req,res){
         const newStream = new Streams(req.body,{})
+        console.log(req.body)
         newStream.save()
         .then(result =>{
             res.status(200).json({message:'Stream created: ' + result}).end()
