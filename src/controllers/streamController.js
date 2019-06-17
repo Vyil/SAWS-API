@@ -39,7 +39,7 @@ module.exports = {
 
         User.findOne({ uuid: req.body.uuid })
             .then(rslt => {
-                newStream.username = rslt.unsername;
+                newStream.username = rslt.username;
                 newStream.save()
                     .then(result => {
                         console.log(newStream._id+' '+newStream.username+' '+result)
