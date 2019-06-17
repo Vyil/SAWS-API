@@ -20,6 +20,9 @@ const UserSchema = new Schema ({
         type: String,
         required: [true, 'Lastname is required']
     },
+    UUID: {
+        type: String
+    },
     iconurl: {
         type: String,
         required: [true, 'Icon is required'],

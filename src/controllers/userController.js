@@ -40,6 +40,18 @@ module.exports = {
 
     },
 
+    getUserByUUID(request, response, next){
+        console.log('GetUserByUUID called')
+
+        User.findOne({
+            UUID: request.body.UUID
+        })
+        .then((user)=>{
+            response.status(200).json(user).end()
+        })
+        .catch(error => next(new ApiError(error,500)))
+    },
+
     test(request, response, next) {
 
         try {
