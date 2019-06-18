@@ -10,7 +10,7 @@ const privateKey = filestream.readFileSync(__dirname + '/cert/private.key');
 
 module.exports = {
 
-    createNewUser(req,res){
+    createNewUser(req, res) {
         console.log('CreateNewUser called ');
 
         var sha256 = function(password){
@@ -64,24 +64,43 @@ module.exports = {
 
     },
 
-    getUserByUUID(request, response, next){
+    getUserByUUID(req, res, next) {
         console.log('GetUserByUUID called')
 
         User.findOne({
-            UUID: request.body.UUID
+            uuid: req.body.uuid
         })
-        .then((user)=>{
-            response.status(200).json(user).end()
-        })
-        .catch(error => next(new ApiError(error,500)))
+            .then((user) => {
+                res.status(200).json(user).end()
+            })
+            .catch(error => next(new ApiError(error, 500)))
     },
 
-    getUser(request,response,next){
-        User.find()
-            .then((user)=>{
-                console.log(user)
-                response.status(200).json(user).end()
-            })
+    getUser(req, res) {
+        var queryParam = req.query.username;
+
+        //No queryParam = find all
+        if (!queryParam) {
+            User.find({})
+                .then(rslt => {
+                    res.status(200).json(rslt).end()
+                    return;
+                })
+                .catch(err => {
+                    res.status(500).json(new ApiError(err, 500)).end()
+                    return;
+                })
+        } else {
+            //Query param is find specific
+            User.findOne({ username: queryParam })
+                .then((user) => {
+                    res.status(200).json(user).end()
+                    return;
+                })
+                .catch(err => {
+                    res.status(500).json(new ApiError(err, 500)).end()
+                })
+        }
     },
 
     test(request, response, next) {
@@ -89,10 +108,10 @@ module.exports = {
         try {
             // Request uniform assertions
             const body = request.body;
-            assert(typeof(request.body) === 'object', 'Request body must be of type object');
-            assert(typeof(request.body.payload) === 'object', 'Payload must be of type object');
+            assert(typeof (request.body) === 'object', 'Request body must be of type object');
+            assert(typeof (request.body.payload) === 'object', 'Payload must be of type object');
             assert(body.hash, 'Hash is missing from body');
-            assert(typeof(body.hash) === 'string', 'Hash property must be of type string');
+            assert(typeof (body.hash) === 'string', 'Hash property must be of type string');
 
             // Request specific assertions
             const payload = request.body.payload;
@@ -100,10 +119,10 @@ module.exports = {
             assert(payload.generator, 'Generator is missing from body');
             assert(payload.key, 'Key is missing from body');
 
-            assert(typeof(payload.prime) === 'string', 'Prime property must be of type string');
-            assert(typeof(payload.generator) === 'string', 'Generator property must be of type string');
-            assert(typeof(payload.key) === 'string', 'Key property must be of type string');
-        } catch(error) {
+            assert(typeof (payload.prime) === 'string', 'Prime property must be of type string');
+            assert(typeof (payload.generator) === 'string', 'Generator property must be of type string');
+            assert(typeof (payload.key) === 'string', 'Key property must be of type string');
+        } catch (error) {
             next(new ApiError(error.message, 412));
         }
         console.log('Session ID: ' + request.session.id);

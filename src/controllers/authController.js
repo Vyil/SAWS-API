@@ -39,9 +39,9 @@ module.exports = {
 
         let username = req.body.username;
         let password = req.body.password;
-        let UUID = req.body.UUID;
+        let uuid = req.body.uuid;
 
-        if (!username || !password || !UUID) {
+        if (!username || !password || !uuid) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
             return
         }
@@ -54,7 +54,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                result.set('UUID', UUID)
+                result.set('uuid', uuid)
                 result.save()
                     .then(result => res.status(200).json(result).end())
                     .catch(error => next(new ApiError(error,500)))

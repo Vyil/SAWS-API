@@ -1,7 +1,7 @@
 const mongoose = require('../database/mongodb')
 const Schema = mongoose.Schema
 
-const chatSchema = new Schema({
+const messageSchema = new Schema({
     content: {
         type: String,
         required: true,
@@ -12,16 +12,16 @@ const chatSchema = new Schema({
         default: Date.now
     },
     stream: {
-        type:  mongoose.Schema.Types.ObjectId,
+        type:  Schema.Types.ObjectId,
         ref: 'Streams',
         required: true,
     },
     user: {
-        type:mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref:'Users',
         required: true,
     }
 
 })
-const Chat = mongoose.model('Message',chatSchema);
-module.exports = Chat; 
+const Message = mongoose.model('Message',messageSchema);
+module.exports = Message; 
