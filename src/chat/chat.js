@@ -46,10 +46,10 @@ module.exports = (io) => {
 
     function saveMessageDB(stream, message) {
         let streamID;
-        console.log('StreamValue: '+stream)
 
         Streams.findOne({ username: stream, live:true })
             .then(rslt => {
+                console.log('RsltValue: '+JSON.stringify(rslt))
                 if(!rslt){
                     return;
                 } else {
