@@ -25,22 +25,22 @@ module.exports = (io) => {
     function increaseViewer(stream) {
         Streams.findOne(stream)
             .then((stream) => {
-                viewers = stream.Viewers
-                viewers++;
+                viewerCount = stream.viewers
+                viewerCount++;
             })
             .update({
-                Viewers: viewers
+                viewers: viewerCount
             })
     }
 
     function decreaseViewer(stream) {
         Streams.findOne(stream)
             .then((stream) => {
-                viewers = stream.Viewers
-                viewers--;
-                Streams.update({
-                    Viewers: viewers
-                })
+                viewerCount = stream.viewers
+                viewerCount--;
+            })
+            .update({
+                viewers: viewerCount
             })
     }
 
