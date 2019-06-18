@@ -13,6 +13,7 @@
     "mongoose": "^5.5.15",
     "morgan": "^1.9.1",
     "node-forge": "^0.8.4",
+    "node-rsa": "^1.0.5",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
@@ -24,7 +25,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec --exit",
-    "start": "node src/server.js"
+    "start": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",

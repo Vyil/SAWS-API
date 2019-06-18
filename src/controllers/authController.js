@@ -13,7 +13,8 @@ const pki = forge.pki;
 
 // Import relevant keys
 const publicKeyPem = config.publicKey;
-const privateKeyPem = config.privateKey;
+const privateKeyPem = config.privatePKCS8Key;
+//const pkcs8KeyPem = config.privatePKCS8Key;
 
 module.exports = {
     //Authentication controller only login authentication
@@ -302,5 +303,24 @@ module.exports = {
         } else {
             next(new ApiError('Signature verification failed', 451));
         }
+    },
+
+    test(request, response, next) {
+        const privateKey = pki.privateKeyFromPem(privateKeyPem);
+        const publicKey = pki.publicKeyFromPem(publicKeyPem);
+        //let testdata = 'test';
+        let rsaPrivateKey = pki.privateKeyToAsn1(privateKey);
+        let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
+        console.log(pki.privateKeyInfoToPem(privateKeyInfo));
+        //console.log(pkcs8KeyInfo);
+        //let key = new NodeRSA();
+        //key.importKey(pkcs8KeyPem, 'pkcs8');
+        //let decryptedData = key.decrypt(testdata, 'base64');
+        //let decryptedData = crypto.privateDecrypt(pkcs8KeyPem, Buffer.from(testdata, 'base64'));
+        //let decoded = forge.util.decode64(testdata);
+        //let decryptedData = privateKey.decrypt(decoded);
+        //console.log(privateKey.decrypt(decodeddata));
+        //console.log(forge.util.encode64(publicKey.encrypt('kaas')));
+
     }
 };
