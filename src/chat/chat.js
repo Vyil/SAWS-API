@@ -23,6 +23,7 @@ module.exports = (io) => {
     })
 
     function increaseViewer(stream) {
+        let viewerCount
         Streams.findOne(stream)
             .then((stream) => {
                 viewerCount = stream.viewers
@@ -34,6 +35,7 @@ module.exports = (io) => {
     }
 
     function decreaseViewer(stream) {
+        let viewerCount
         Streams.findOne(stream)
             .then((stream) => {
                 viewerCount = stream.viewers
