@@ -19,7 +19,7 @@ module.exports = {
             })
 
     },
-    getViewerCount(request, response, next) {
+    getViewerCount(request, response) {
         console.log('GetViewCount called')
 
         Stream.findOne({ User: request.body.username })
@@ -73,6 +73,17 @@ module.exports = {
                 return;
             })
             .catch(err => {
+                res.status(500).json(new ApiError(err, 500)).end()
+                return;
+            })
+    },
+
+    getUserLive(req,res){
+        Streams.findOne({username: req.params.username})
+            .then((result)=>{
+                res.status(200).json({live: result.live}).end()
+            })
+            .catch(err =>{
                 res.status(500).json(new ApiError(err, 500)).end()
                 return;
             })
