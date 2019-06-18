@@ -7,7 +7,7 @@ module.exports = (io) => {
 
     const receivedPath = io.of('/chat')
     receivedPath.on('connection', (client) => {
-        //increaseViewer(client.handshake.query.stream)
+        increaseViewer(client.handshake.query.stream)
         console.log('client connected: ' + client.handshake.query.stream)
         client.join(client.handshake.query.stream)
         client.on('new-message', (msg) => {
@@ -16,7 +16,7 @@ module.exports = (io) => {
         })
         client.on('disconnect', () => {
             console.log('Client disconnected')
-            //decreaseViewer(client.handshake.query.stream)
+            decreaseViewer(client.handshake.query.stream)
             client.disconnect()
 
         })
