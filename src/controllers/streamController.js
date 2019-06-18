@@ -24,7 +24,14 @@ module.exports = {
 
         Streams.findOne({ username: request.query.username, live: true })
             .then((stream) => {
-                response.status(200).json({viewers: stream.viewers}).end()
+                if(stream!=null){
+                    response.status(200).json({viewers: stream.viewers}).end()
+                }else{
+                    response.status(400).json(new ApiError('Stream not found', 400)).end()
+                }
+            })
+            .catch(err =>{
+                response.status(500).json(new ApiError(err,500)).end()
             })
     },
 
