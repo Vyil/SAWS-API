@@ -13,6 +13,21 @@ module.exports = {
     createNewUser(req,res){
         console.log('CreateNewUser called ');
 
+        var sha256 = function(password){
+            var hash = crypto.createHash('sha256');
+            hash.update(password);
+            var value = hash.digest('hex');
+            return {
+                passwordHash:value
+            };
+        };
+
+        function saltHashPassword(userpassword) {
+            const passwordData = sha256(userpassword).passwordHash;
+            passwordData.toString();
+            return passwordData;
+        }
+
         User.findOne({
             username: req.body.username
         })
@@ -20,7 +35,16 @@ module.exports = {
             if (result) {
                 res.status(409).send(new ApiError('Username already exists', 409)).end();
             } else {
-                const newUser = new User(req.body, {});
+                const username = req.body.username;
+                const password = saltHashPassword(req.body.password); 
+                const firstname = req.body.firstname;
+                const lastname = req.body.lastname;
+                const newUser = new User({
+                    username: username,
+                    password: password,
+                    firstname: firstname,
+                    lastname: lastname
+                });
                 newUser.save()
                     .then(result => {
                         res.status(200).json({
@@ -35,7 +59,7 @@ module.exports = {
             }
         })
         .catch(err => {
-            res.status(409).send(new ApiError('Username already exists: ' + err, 409)).end();
+            res.status(400).send(new ApiError('Error occured: ' + err, 400)).end();
         })
 
     },
