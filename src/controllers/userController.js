@@ -47,7 +47,7 @@ module.exports = {
             uuid: req.body.UUID
         })
             .then((user) => {
-                response.status(200).json(user).end()
+                res.status(200).json(user).end()
             })
             .catch(error => next(new ApiError(error, 500)))
     },
