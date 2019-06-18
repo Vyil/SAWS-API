@@ -30,6 +30,11 @@ const UserSchema = new Schema ({
     },
     satoshiAmount: {
         type: Number,
+    },
+    live: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
