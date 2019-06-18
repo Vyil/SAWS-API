@@ -22,9 +22,9 @@ module.exports = {
     getViewerCount(request, response) {
         console.log('GetViewCount called')
 
-        Stream.findOne({ User: request.body.username })
+        Stream.findOne({ username: request.body.username })
             .then((stream) => {
-                response.status(200).json(stream.Viewers).end()
+                response.status(200).json({viewers: stream.viewers}).end()
             })
     },
 
