@@ -23,9 +23,8 @@ module.exports = {
 
         let username = req.body.username;
         let password = req.body.password;
-        let UUID = req.body.UUID;
 
-        if (!username || !password || !UUID) {
+        if (!username || !password) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
             return
         }
@@ -53,9 +52,9 @@ module.exports = {
 
         let username = req.body.username;
         let password = req.body.password;
-        let UUID = req.body.UUID;
+        let uuid = req.body.uuid;
 
-        if (!username || !password || !UUID) {
+        if (!username || !password || !uuid) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
             return
         }
@@ -68,7 +67,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                result.set('UUID', UUID);
+                result.set('uuid', uuid);
                 result.save()
                     .then(result => res.status(200).json(result).end())
                     .catch(error => next(new ApiError(error,500)))
@@ -289,7 +288,7 @@ module.exports = {
     verifySignature(request, response, next) {
         if(request.body.signature && request.session.key) {
             try {
-                var verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
+                const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
                 if(verified) {
                     next();
                 } else {
