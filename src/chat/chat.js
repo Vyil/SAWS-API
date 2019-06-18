@@ -46,11 +46,14 @@ module.exports = (io) => {
 
     function saveMessageDB(stream, message) {
         let streamID;
+        if(!stream){
+            return;
+        }
 
         Streams.findOne({ username: stream, live:true })
             .then(rslt => {
                 if(!rslt){
-                    return false;
+                    return;
                 } else {
                     streamID = rslt._id
                 }                
