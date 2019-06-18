@@ -33,8 +33,8 @@ module.exports = (io) => {
                     viewers: viewerCount
                 })
             })
-            .catch(err =>{
-                response.status(500).json(new ApiError(err,500)).end()
+            .catch(err => {
+                console.log(err)
             })
     }
 
@@ -49,8 +49,8 @@ module.exports = (io) => {
                     viewers: viewerCount
                 })
             })
-            .catch(err =>{
-                response.status(500).json(new ApiError(err,500)).end()
+            .catch(err => {
+                console.log(err)
             })
             
     }
