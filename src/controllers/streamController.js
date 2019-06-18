@@ -43,7 +43,11 @@ module.exports = {
                     return;
                 } else {
                     newStream.username = rslt.username;
-                    newStream.save()
+                    rslt.live=true;
+                    Promise.all([
+                        rslt.save(),
+                        newStream.save()
+                    ])
                         .then(result => {
                             res.status(200).json({ message: 'Stream created: ' + result }).end()
                             return;
@@ -59,10 +63,17 @@ module.exports = {
     closeStream(req, res) {
         Streams.findOne({ uuid: req.body.uuid, live:true })
             .then(result => {
-                result.live = false;
-                result.save()
+                User.findOne({uuid:req.body.uuid})
+                .then(rslt=>{
+                    rslt.live=false;
+                    result.live = false;
+                    Promise.all([
+                        rslt.save(),
+                        result.save()
+                    ])
                 res.status(200).json({ message: 'Closed stream: ' + result._id }).end();
                 return;
+                })               
             })
             .catch(err => {
                 res.status(500).json(new ApiError('Database error, are you sure streamID exists? :' + err, 500)).end()
