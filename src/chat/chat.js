@@ -26,7 +26,13 @@ module.exports = (io) => {
         let viewerCount
         Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewerCount = 1
+                if(stream.viewers === undefined){
+                    viewerCount = 0
+                    console.log('Viewercount= ' + viewerCount)
+                }else{
+                    viewerCount = stream.viewers
+                    console.log('Viewercount= ' + viewerCount)
+                }
                 viewerCount++;
 
                 Streams.findOne({_id: stream._id})
@@ -42,7 +48,13 @@ module.exports = (io) => {
         let viewerCount
         Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewerCount = 1
+                if(stream.viewers === undefined){
+                    viewerCount = 0
+                    console.log('Viewercount= ' + viewerCount)
+                }else{
+                    viewerCount = stream.viewers
+                    console.log('Viewercount= ' + viewerCount)
+                }
                 viewerCount--;
 
                 Streams.findOne({_id: stream._id})
