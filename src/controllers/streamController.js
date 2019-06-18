@@ -33,17 +33,17 @@ module.exports = {
             date: new Date(Date.now()),
             live: true,
             uuid: req.body.uuid,
-            username:''
+            username: ''
         })
 
         User.findOne({ uuid: req.body.uuid })
             .then(rslt => {
-                if(rslt.live){
-                    res.status(500).json(new ApiError('User is already live!',500)).end()
+                if (rslt.live) {
+                    res.status(500).json(new ApiError('User is already live!', 500)).end()
                     return;
                 } else {
                     newStream.username = rslt.username;
-                    rslt.live=true;
+                    rslt.live = true;
                     Promise.all([
                         rslt.save(),
                         newStream.save()
@@ -52,7 +52,7 @@ module.exports = {
                             res.status(200).json({ message: 'Stream created: ' + result }).end()
                             return;
                         })
-                    }                
+                }
             })
             .catch(err => {
                 res.status(500).json(new ApiError(err, 500)).end()
@@ -61,19 +61,21 @@ module.exports = {
     },
 
     closeStream(req, res) {
-        Streams.findOne({ uuid: req.body.uuid, live:true })
+        Streams.findOne({ uuid: req.body.uuid, live: true })
             .then(result => {
-                User.findOne({uuid:req.body.uuid})
-                .then(rslt=>{
-                    rslt.live=false;
-                    result.live = false;
-                    Promise.all([
-                        rslt.save(),
-                        result.save()
-                    ])
-                res.status(200).json({ message: 'Closed stream: ' + result._id }).end();
-                return;
-                })               
+                User.findOne({ uuid: req.body.uuid })
+                    .then(rslt => {
+                        rslt.live = false;
+                        result.live = false;
+                        Promise.all([
+                            rslt.save(),
+                            result.save()
+                        ])
+                            .then(
+                                res.status(200).json({ message: 'Closed stream: ' + result._id }).end()
+                            )
+
+                    })
             })
             .catch(err => {
                 res.status(500).json(new ApiError('Database error, are you sure streamID exists? :' + err, 500)).end()
