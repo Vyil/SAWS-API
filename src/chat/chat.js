@@ -26,7 +26,7 @@ module.exports = (io) => {
         let viewerCount
         Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewerCount = stream.viewers
+                viewerCount = 1
                 viewerCount++;
 
                 stream.update({
@@ -42,7 +42,7 @@ module.exports = (io) => {
         let viewerCount
         Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewerCount = stream.viewers
+                viewerCount = 1
                 viewerCount--;
 
                 stream.update({
