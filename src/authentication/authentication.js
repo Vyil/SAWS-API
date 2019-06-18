@@ -63,6 +63,7 @@ function verifyDigitalSignature(payload, signature, publicKey) {
         md.update(JSON.stringify(payload), 'utf8');
         return publicKey.verify(md.digest().bytes(), signature);
     } catch(error) {
+        console.log(error);
         return false;
     }
 }
@@ -72,6 +73,7 @@ function verifyHmac(payload, signature, key) {
         let newHmac = createHmac(payload, key);
         return newHmac === signature;
     } catch(error) {
+        console.log(error);
         return false;
     }
 }
