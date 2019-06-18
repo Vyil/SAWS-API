@@ -29,9 +29,9 @@ module.exports = (io) => {
                 viewerCount = 1
                 viewerCount++;
 
-                stream.update({
-                    viewers: viewerCount
-                })
+                Streams.findOne({_id: stream._id})
+                    .update({viewers: viewerCount})
+                    .then(()=> console.log('Viewercount increased'))
             })
             .catch(err => {
                 console.log(err)
@@ -45,9 +45,9 @@ module.exports = (io) => {
                 viewerCount = 1
                 viewerCount--;
 
-                stream.update({
-                    viewers: viewerCount
-                })
+                Streams.findOne({_id: stream._id})
+                    .update({viewers: viewerCount})
+                    .then(()=> console.log('Viewercount decreased'))
             })
             .catch(err => {
                 console.log(err)

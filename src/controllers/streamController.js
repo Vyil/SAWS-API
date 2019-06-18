@@ -25,7 +25,7 @@ module.exports = {
         Streams.findOne({ username: request.query.username, live: true })
             .then((stream) => {
                 if(stream!=null){
-                    console.log(stream.viewers);
+                    console.log('Viewcount = ' + stream.viewers);
                     response.status(200).json({viewers: stream.viewers}).end()
                 }else{
                     response.status(400).json(new ApiError('Stream not found', 400)).end()
