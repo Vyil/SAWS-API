@@ -44,7 +44,7 @@ module.exports = {
         console.log('GetUserByUUID called')
 
         User.findOne({
-            uuid: req.body.UUID
+            uuid: req.body.uuid
         })
             .then((user) => {
                 res.status(200).json(user).end()
