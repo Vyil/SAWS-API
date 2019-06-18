@@ -33,6 +33,9 @@ module.exports = (io) => {
                     viewers: viewerCount
                 })
             })
+            .catch(err =>{
+                response.status(500).json(new ApiError(err,500)).end()
+            })
     }
 
     function decreaseViewer(stream) {
@@ -45,6 +48,9 @@ module.exports = (io) => {
                 stream.update({
                     viewers: viewerCount
                 })
+            })
+            .catch(err =>{
+                response.status(500).json(new ApiError(err,500)).end()
             })
             
     }
