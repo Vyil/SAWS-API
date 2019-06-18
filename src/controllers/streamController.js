@@ -53,7 +53,7 @@ module.exports = {
     },
 
     closeStream(req, res) {
-        Streams.findOne({ _id: req.body.id })
+        Streams.findOne({ uuid: req.body.uuid, live:true })
             .then(result => {
                 result.live = false;
                 result.save()
