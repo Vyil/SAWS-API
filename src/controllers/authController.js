@@ -1,17 +1,19 @@
-const auth = require('./authentication');
+// Importing used models
+const auth = require('../authentication/authentication');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
-const chalk = require('chalk');
 const Certificate = require('../models/certificate');
+const config = require('../authentication/config');
 
 // Importing used packages
+const assert = require('assert');
+const chalk = require('chalk');
 const forge = require('node-forge');
 const pki = forge.pki;
-const filestream = require('fs');
 
 // Import relevant keys
-const publicKeyPem = filestream.readFileSync(__dirname + '/cert/public.key');
-const privateKeyPem = filestream.readFileSync(__dirname + '/cert/private.key');
+const publicKeyPem = config.publicKey;
+const privateKeyPem = config.privateKey;
 
 module.exports = {
     //Authentication controller only login authentication
@@ -81,13 +83,39 @@ module.exports = {
 
     authenticateNewDevice(request, response, next) {
 
+        try {
+            // Request uniform assertions
+            const body = request.body;
+            assert(typeof(request.body) === 'object', 'Request body must be of type object');
+            assert(typeof(request.body.payload) === 'object', 'Payload must be of type object');
+            assert(body.signature, 'Hash is missing from body');
+            assert(typeof(body.signature) === 'string', 'Hash property must be of type string');
+
+            // Request specific assertions
+            const payload = request.body.payload;
+            assert(payload.username, 'Username is missing from body');
+            assert(payload.password, 'Password is missing from body');
+            assert(payload.uuid, 'UUID is missing from body');
+            assert(payload.key, 'Key is missing from body');
+            assert(payload.iv, 'Iv is missing from body');
+
+            assert(typeof(payload.username) === 'string', 'Username property must be of type string');
+            assert(typeof(payload.password) === 'string', 'Password property must be of type string');
+            assert(typeof(payload.uuid) === 'string', 'UUID property must be of type string');
+            assert(typeof(payload.key) === 'string', 'Key property must be of type string');
+            assert(typeof(payload.iv) === 'string', 'Iv property must be of type string');
+        } catch(error) {
+            next(new ApiError(error.message, 412));
+            return;
+        }
+
         //console.log("Username: " + crypto.publicEncrypt(publicKey, Buffer.from('aron', 'utf8')).toString('base64'));
         //console.log("Password: " + crypto.publicEncrypt(publicKey, Buffer.from('c96b8d3274dcd24eceb36699d094fecbb2416c7770082e0707c7b76b29da2548', 'utf8')).toString('base64'));
         //console.log("Uuid: " + crypto.publicEncrypt(publicKey, Buffer.from('v743984nw748v9wfhw784w', 'utf8')).toString('base64'));
         //console.log("Passphrase: " + crypto.publicEncrypt(publicKey, Buffer.from('v983v4b73894478', 'utf8')).toString('base64'));
 
         try {
-            let username, password, uuid, key, iv, hash;
+            let username, password, uuid, key, iv, signature;
             let privateKey = pki.privateKeyFromPem(privateKeyPem);
             try {
                 username = privateKey.decrypt(forge.util.decode64(request.body.payload.username));
@@ -96,92 +124,122 @@ module.exports = {
 
                 key = privateKey.decrypt(forge.util.decode64(request.body.payload.key));
                 iv = privateKey.decrypt(forge.util.decode64(request.body.payload.iv));
+                signature = request.body.signature;
 
-                //username = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.username, 'base64'));
-                //password = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.password, 'base64'));
-                //uuid = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.uuid, 'base64'));
-                //key = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.key, 'base64'));
-                //iv = crypto.privateDecrypt(privateKey, Buffer.from(request.body.payload.iv, 'base64'));
             } catch (decrypterror) {
-                console.log(decrypterror);
-                // TODO - decrypt error
+                next(new ApiError('Error during decryption of body elements', 500));
+                return;
             }
 
-            User.findOne({
+            let requestPayload = {
                 username: username,
-                password: password
-            })
-                .then(result => {
-                    // TODO - Check username/password combo in database
-                    //console.log(result);
-                    //response.status(200).json({}).end();
-
-                    let keypair = pki.rsa.generateKeyPair(2048);
-                    let certificate = pki.createCertificate();
-
-                    certificate.publicKey = keypair.publicKey;
-                    certificate.validity.notBefore = new Date();
-                    certificate.validity.notAfter = new Date();
-                    certificate.validity.notAfter.setFullYear(certificate.validity.notBefore.getFullYear() + 1);
-
-                    let attributes = [{
-                        name: 'commonName',
-                        value: username
-                    }, {
-                        name: 'countryName',
-                        value: 'NL'
-                    }, {
-                        shortName: 'ST',
-                        value: 'Noord-Brabant'
-                    }, {
-                        name: 'localityName',
-                        value: 'The Netherlands'
-                    }, {
-                        name: 'organizationName',
-                        value: 'Avans'
-                    }, {
-                        shortName: 'OU',
-                        value: username
-                    }];
-
-                    certificate.setSubject(attributes);
-                    certificate.setIssuer(attributes);
-                    certificate.sign(keypair.privateKey);
-
-                    //let encrypted = auth.encryptAES('test', key, iv);
-                    //console.log(auth.decryptAES(encrypted, key, iv));
-                    let pemCertificate = pki.certificateToPem(certificate);
-                    //console.log(pemCertificate);
-                    //console.log(pki.publicKeyToPem(keypair.publicKey));
-
-                    let newCertificate = new Certificate({
-                        username: username,
-                        certificate: pemCertificate,
-                        publicKey: pki.publicKeyToPem(keypair.publicKey),
-                        privateKey: pki.privateKeyToPem(keypair.privateKey)
-                    });
-
-                    newCertificate.save()
-                        .then(result => {
-                            response.status(200).json({
-                                certificate: auth.encryptAES(pemCertificate, key, iv),
-                                publicKey: auth.encryptAES(pki.publicKeyToPem(keypair.publicKey), key, iv),
-                                privateKey: auth.encryptAES(pki.privateKeyToPem(keypair.privateKey), key, iv)
-                            });
-                        })
-                        .catch(error => {
-                            next(new ApiError(error, 500));
-                    })
+                password: password,
+                uuid: uuid,
+                key: forge.util.encode64(key),
+                iv: forge.util.encode64(iv)
+            };
+            let verified = auth.verifyHmac(requestPayload, signature, key);
+            if(verified) {
+                User.findOne({
+                    username: username,
+                    password: password
                 })
-                .catch(err => {
-                    next(new ApiError(err, 500));
-                });
+                    .then(result => {
+                        let keypair = pki.rsa.generateKeyPair(2048);
+                        let certificate = pki.createCertificate();
+
+                        certificate.publicKey = keypair.publicKey;
+                        certificate.validity.notBefore = new Date();
+                        certificate.validity.notAfter = new Date();
+                        certificate.validity.notAfter.setFullYear(certificate.validity.notBefore.getFullYear() + 1);
+
+                        let attributes = [{
+                            name: 'commonName',
+                            value: username
+                        }, {
+                            name: 'countryName',
+                            value: 'NL'
+                        }, {
+                            shortName: 'ST',
+                            value: 'Noord-Brabant'
+                        }, {
+                            name: 'localityName',
+                            value: 'The Netherlands'
+                        }, {
+                            name: 'organizationName',
+                            value: 'Avans'
+                        }, {
+                            shortName: 'OU',
+                            value: username
+                        }];
+
+                        certificate.setSubject(attributes);
+                        certificate.setIssuer(attributes);
+                        certificate.sign(keypair.privateKey);
+
+                        let pemCertificate = pki.certificateToPem(certificate);
+
+                        let newCertificate = new Certificate({
+                            username: username,
+                            certificate: pemCertificate,
+                            publicKey: pki.publicKeyToPem(keypair.publicKey),
+                            privateKey: pki.privateKeyToPem(keypair.privateKey)
+                        });
+
+                        newCertificate.save()
+                            .then(result => {
+                                let unencryptedPayload = {
+                                    certificate: pemCertificate,
+                                    publicKey: pki.publicKeyToPem(keypair.publicKey),
+                                    privateKey: pki.privateKeyToPem(keypair.privateKey)
+                                };
+                                let payload = {
+                                    certificate: auth.encryptAES(pemCertificate, key, iv),
+                                    publicKey: auth.encryptAES(pki.publicKeyToPem(keypair.publicKey), key, iv),
+                                    privateKey: auth.encryptAES(pki.privateKeyToPem(keypair.privateKey), key, iv)
+                                };
+                                response.status(200).json({
+                                    payload: payload,
+                                    signature: auth.createHmac(unencryptedPayload, key)
+                                });
+                            })
+                            .catch(error => {
+                                next(new ApiError(error, 500));
+                            })
+                    })
+                    .catch(err => {
+                        next(new ApiError(err, 500));
+                    });
+            } else {
+                next(new ApiError('Signature verification failed', 451));
+            }
         } catch (error) {
             next(new ApiError(error, 500));
         }
     },
 
     loginDevice(request, response, next) {
+
+        try {
+            // Request uniform assertions
+            const body = request.body;
+            assert(typeof(request.body) === 'object', 'Request body must be of type object');
+            assert(typeof(request.body.payload) === 'object', 'Payload must be of type object');
+            assert(body.signature, 'Hash is missing from body');
+            assert(typeof(body.signature) === 'string', 'Hash property must be of type string');
+
+            // Request specific assertions
+            const payload = request.body.payload;
+            assert(payload.username, 'Username is missing from body');
+            assert(payload.certificate, 'Certificate is missing from body');
+
+            assert(typeof(payload.username) === 'string', 'Username property must be of type string');
+            assert(typeof(payload.certificate) === 'string', 'Certificate property must be of type string');
+        } catch(error) {
+            next(new ApiError(error.message, 412));
+            return;
+        }
+
         let username, certificate, signature;
 
         username = request.body.payload.username;
@@ -202,26 +260,13 @@ module.exports = {
                             token: token
                         })).end();
                     } else {
-                        next(new ApiError('Invalid credentials provided', 412));
+                        next(new ApiError('Signature verification failed', 451));
                     }
                 } else {
-                    next(new ApiError('Invalid credentials', 412))
+                    next(new ApiError('Invalid credentials provided', 412))
                 }
-                /*let privateKey = pki.privateKeyFromPem(result.privateKey);
-
-                let test = {
-                    username: "aron"
-                };
-                let signature = auth.createDigitalSignature(test, privateKey);
-                let encodedSignature = forge.util.encode64(signature);
-                let decodedSignature = forge.util.decode64(encodedSignature);
-
-                let verified = auth.verifyDigitalSignature(test, decodedSignature, publicKey);
-                console.log(verified);*/
-
             })
             .catch(err => {
-                console.log(err);
                 next(new ApiError(err, 500));
             });
     },
@@ -256,9 +301,5 @@ module.exports = {
         } else {
             next(new ApiError('Signature verification failed', 451));
         }
-    },
-
-    aron(request, response, next) {
-        response.status(200).json({}).end();
     }
 };

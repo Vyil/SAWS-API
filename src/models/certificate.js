@@ -4,9 +4,7 @@ const Schema = mongoose.Schema;
 const CertificateSchema = new Schema ({
     username: {
         type: String,
-        required: [true, 'Username is required'],
-        unique: true
-
+        required: [true, 'Username is required']
     },
     certificate: {
         type: String,

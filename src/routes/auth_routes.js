@@ -3,12 +3,12 @@ const router = express.Router();
 
 const authController = require('../controllers/authController');
 
-//public routes
-//router.post('/login', authController.login);
-//router.post('/loginuuid', authController.loginUUID);
-//router.post('/test', authController.authenticateNewDevice);
-router.post('/logintest', authController.loginDevice);
+// Authentication routes
+router.post('/login', authController.login);
+router.post('/loginuuid', authController.loginUUID);
+router.post('/auth', authController.authenticateNewDevice);
+router.put('/auth', authController.loginDevice);
+// Verification paths
 router.all('*', authController.verifySignature);
 router.all('*', authController.validateToken);
-router.post('/aron', authController.aron);
 module.exports = router;
