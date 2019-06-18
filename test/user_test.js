@@ -17,7 +17,7 @@ describe('User controller test', ()=>{
         })
 
         chai.request(server)
-            .post('/users')
+            .post('/register')
             .send(user)
             .end((err, res)=>{
                 res.should.have.status(200)
@@ -54,12 +54,21 @@ describe('User controller test', ()=>{
         }
 
         chai.request(server)
-            .post('/users')
+            .post('/register')
             .send(user)
             .end((res)=>{
                 res.should.have.status(200)
                 res.body.should.have.property('password').eql(saltHashPassword('admin'))
                 done()
+            })
+    }),
+
+    it('it should get all users', (done)=>{
+        chai.request(server)
+            .get('/user')
+            .end((res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property()
             })
     })
 })
