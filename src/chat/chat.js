@@ -28,9 +28,10 @@ module.exports = (io) => {
             .then((stream) => {
                 viewerCount = stream.viewers
                 viewerCount++;
-            })
-            .update({
-                viewers: viewerCount
+
+                stream.update({
+                    viewers: viewerCount
+                })
             })
     }
 
@@ -40,10 +41,12 @@ module.exports = (io) => {
             .then((stream) => {
                 viewerCount = stream.viewers
                 viewerCount--;
+                
+                stream.update({
+                    viewers: viewerCount
+                })
             })
-            .update({
-                viewers: viewerCount
-            })
+            
     }
 
     function saveMessageDB(stream, message) {
