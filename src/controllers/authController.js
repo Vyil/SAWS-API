@@ -280,7 +280,8 @@ module.exports = {
             } else {
                 request.header.username = payload.sub;
                 console.log(chalk.green('[TOKEN] Authentification OK for: ' + payload.sub));
-                next();
+                response.status(200).json({}).end();
+                //next();
             }
         })
     },
@@ -290,7 +291,8 @@ module.exports = {
             try {
                 const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
                 if(verified) {
-                    next();
+                    response.status(200).json({}).end();
+                    //next();
                 } else {
                     next(new ApiError('Signature verification failed', 451));
                 }
