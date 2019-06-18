@@ -84,7 +84,7 @@ module.exports = {
     },
 
     getLiveStreams(req, res) {
-        Streams.find({ live: true })
+        User.find({ live: true })
             .then(result => {
                 res.status(200).json(result).end()
                 return;
@@ -96,7 +96,7 @@ module.exports = {
     },
 
     getUserLive(req,res){
-        Streams.findOne({username: req.params.username})
+        User.findOne({username: req.params.username})
             .then((result)=>{
                 res.status(200).json({live: result.live}).end()
             })
