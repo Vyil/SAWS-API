@@ -40,7 +40,7 @@ module.exports = {
 
     },
 
-    getUserByUUID(req, res) {
+    getUserByUUID(req, res, next) {
         console.log('GetUserByUUID called')
 
         User.findOne({
