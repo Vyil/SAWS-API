@@ -18,16 +18,20 @@ module.exports = {
         })
     },
 
-    stopSatoshi(req, res){
+    stopSatoshi(req, res,next){
         try {
-            const newSatoshiAmount = user.satoshiAmount + satoshi.getAmount;
+            
         User.findOne({username: req.body.username})
         .then(result => {
             if (result){
-                User.updateOne({satoshiAmount: satoshiAmount}, {satoshiAmount: newSatoshiAmount})
-                    .then(() => res.status(200).json('satoshi amount updated').end())
+                const newSatoshiAmount = result.satoshiAmount + satoshi.getAmount;
+                //User.updateOne({satoshiAmount: satoshiAmount}, {satoshiAmount: newSatoshiAmount})
+                result.satoshiAmount = newSatoshiAmount;
+                result.save()
+                    .then(() => 
+                    res.status(200).json('satoshi amount updated').end())
                     .catch((error) => next(new ApiError(error.toString(), 500)));
-                satoshi.stop();
+                    satoshi.stop();
             }else {
                 res.status().send(new ApiError('Username does not exisit', 409)).end();
             }
