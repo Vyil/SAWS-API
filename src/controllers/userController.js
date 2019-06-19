@@ -2,6 +2,7 @@ const auth = require('../authentication/authentication');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
 const config = require('../authentication/config');
+const crypto = require('crypto');
 
 const privateKey = config.privateKey;
 
@@ -19,7 +20,7 @@ module.exports = {
             };
         };
 
-        function saltHashPassword(userpassword) {
+        function hashPassword(userpassword) {
             const passwordData = sha256(userpassword).passwordHash;
             passwordData.toString();
             return passwordData;
@@ -33,7 +34,7 @@ module.exports = {
                 res.status(409).send(new ApiError('Username already exists', 409)).end();
             } else {
                 const username = req.body.username;
-                const password = saltHashPassword(req.body.password); 
+                const password = hashPassword(req.body.password); 
                 const firstname = req.body.firstname;
                 const lastname = req.body.lastname;
                 const newUser = new User({

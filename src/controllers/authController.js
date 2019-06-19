@@ -6,6 +6,7 @@ const Certificate = require('../models/certificate');
 const config = require('../authentication/config');
 
 // Importing used packages
+const crypto = require('crypto');
 const assert = require('assert');
 const chalk = require('chalk');
 const forge = require('node-forge');
@@ -21,8 +22,24 @@ module.exports = {
     login(req,res){
         console.log('Login called');
 
+        var sha256 = function(password){
+            var hash = crypto.createHash('sha256');
+            hash.update(password);
+            var value = hash.digest('hex');
+            return {
+                passwordHash:value
+            };
+        };
+
+        function hashPassword(userpassword) {
+            const passwordData = sha256(userpassword).passwordHash;
+            passwordData.toString();
+            return passwordData;
+        }
+
         let username = req.body.username;
         let password = req.body.password;
+        let hashedPass = hashPassword(password);
 
         if (!username || !password) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
@@ -31,7 +48,7 @@ module.exports = {
 
         User.findOne({username:username})
         .then(result=>{
-            if(result.password === password){
+            if(result.password === hashedPass){
                 let token = auth.encodeToken(result._id);
                 let resultObject = {
                     "token":token,
@@ -50,9 +67,25 @@ module.exports = {
     loginUUID(req,res, next){
         console.log('Login called');
 
+        var sha256 = function(password){
+            var hash = crypto.createHash('sha256');
+            hash.update(password);
+            var value = hash.digest('hex');
+            return {
+                passwordHash:value
+            };
+        };
+
+        function hashPassword(userpassword) {
+            const passwordData = sha256(userpassword).passwordHash;
+            passwordData.toString();
+            return passwordData;
+        }
+
         let username = req.body.username;
         let password = req.body.password;
         let uuid = req.body.uuid;
+        let hashedPass = hashPassword(password);
 
         if (!username || !password || !uuid) {
             res.status(412).json(new ApiError('Missing login parameters', 412)).end();
@@ -61,7 +94,7 @@ module.exports = {
 
         User.findOne({username:username})
         .then(result=>{
-            if(result.password === password){
+            if(result.password === hashedPass){
                 let token = auth.encodeToken(result._id);
                 let resultObject = {
                     "token":token,
