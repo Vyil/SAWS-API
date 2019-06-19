@@ -218,13 +218,13 @@ module.exports = {
                         let pemCertificate = pki.certificateToPem(certificate);
                         let publicKey = pki.publicKeyToPem(keypair.publicKey).toString().replace(/  |\r\n|\n|\r/gm, '');
                         pemCertificate = pemCertificate.toString().replace(/  |\r\n|\n|\r/gm, '');
-                        newPrivateKeyPem.toString().replace(/  |\r\n|\n|\r/gm, '');
+                        newPrivateKeyPem = newPrivateKeyPem.toString().replace(/  |\r\n|\n|\r/gm, '');
 
 
                         let newCertificate = new Certificate({
                             username: username,
                             certificate: pemCertificate,
-                            publicKey: pki.publicKeyToPem(keypair.publicKey),
+                            publicKey: publicKey,
                             privateKey: newPrivateKeyPem
                         });
 
@@ -232,12 +232,12 @@ module.exports = {
                             .then(result => {
                                 let unencryptedPayload = {
                                     certificate: pemCertificate,
-                                    publicKey: pki.publicKeyToPem(keypair.publicKey),
+                                    publicKey: publicKey,
                                     privateKey: newPrivateKeyPem
                                 };
                                 let payload = {
                                     certificate: auth.encryptAES(pemCertificate, key, iv),
-                                    publicKey: auth.encryptAES(pki.publicKeyToPem(keypair.publicKey), key, iv),
+                                    publicKey: auth.encryptAES(publicKey, key, iv),
                                     privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
                                 };
                                 response.status(200).json({
