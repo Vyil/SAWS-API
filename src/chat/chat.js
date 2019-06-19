@@ -7,7 +7,7 @@ module.exports = (io) => {
 
     const receivedPath = io.of('/chat')
     receivedPath.on('connection', (client) => {
-        //increaseViewer(client.handshake.query.stream)
+        increaseViewer(client.handshake.query.stream)
         console.log('client connected: ' + client.handshake.query.stream)
         client.join(client.handshake.query.stream)
         client.on('new-message', (msg) => {
@@ -16,32 +16,55 @@ module.exports = (io) => {
         })
         client.on('disconnect', () => {
             console.log('Client disconnected')
-            //decreaseViewer(client.handshake.query.stream)
+            decreaseViewer(client.handshake.query.stream)
             client.disconnect()
 
         })
     })
 
     function increaseViewer(stream) {
-        Streams.findOne(stream)
+        let viewerCount
+        Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewers = stream.Viewers
-                viewers++;
+                if(stream.viewers === undefined){
+                    viewerCount = 0
+                    console.log('Viewercount= ' + viewerCount)
+                }else{
+                    viewerCount = stream.viewers
+                    console.log('Viewercount= ' + viewerCount)
+                }
+                viewerCount++;
+
+                Streams.findOne({_id: stream._id})
+                    .update({viewers: viewerCount})
+                    .then(()=> console.log('Viewercount increased'))
             })
-            .update({
-                Viewers: viewers
+            .catch(err => {
+                console.log(err)
             })
     }
 
     function decreaseViewer(stream) {
-        Streams.findOne(stream)
+        let viewerCount
+        Streams.findOne({username: stream, live: true})
             .then((stream) => {
-                viewers = stream.Viewers
-                viewers--;
-                Streams.update({
-                    Viewers: viewers
-                })
+                if(stream.viewers === undefined){
+                    viewerCount = 0
+                    console.log('Viewercount= ' + viewerCount)
+                }else{
+                    viewerCount = stream.viewers
+                    console.log('Viewercount= ' + viewerCount)
+                }
+                viewerCount--;
+
+                Streams.findOne({_id: stream._id})
+                    .update({viewers: viewerCount})
+                    .then(()=> console.log('Viewercount decreased'))
             })
+            .catch(err => {
+                console.log(err)
+            })
+            
     }
 
     function saveMessageDB(stream, message) {

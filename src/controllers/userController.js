@@ -2,6 +2,7 @@ const auth = require('../authentication/authentication');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
 const config = require('../authentication/config');
+const crypto = require('crypto');
 
 const privateKey = config.privateKey;
 
@@ -10,30 +11,54 @@ module.exports = {
     createNewUser(req, res) {
         console.log('CreateNewUser called ');
 
+        var sha256 = function(password){
+            var hash = crypto.createHash('sha256');
+            hash.update(password);
+            var value = hash.digest('hex');
+            return {
+                passwordHash:value
+            };
+        };
+
+        function hashPassword(userpassword) {
+            const passwordData = sha256(userpassword).passwordHash;
+            passwordData.toString();
+            return passwordData;
+        }
+
         User.findOne({
             username: req.body.username
         })
-            .then(result => {
-                if (result) {
-                    res.status(409).send(new ApiError('Username already exists', 409)).end();
-                } else {
-                    const newUser = new User(req.body, {});
-                    newUser.save()
-                        .then(result => {
-                            res.status(200).json({
-                                message: "Created user: " + result
-                            }).end();
-                            return;
-                        })
-                        .catch(err => {
-                            res.status(400).send(new ApiError('Error occurred: ' + err, 400)).end();
-                            return;
-                        });
-                }
-            })
-            .catch(err => {
-                res.status(409).send(new ApiError('Username already exists: ' + err, 409)).end();
-            })
+        .then(result => {
+            if (result) {
+                res.status(409).send(new ApiError('Username already exists', 409)).end();
+            } else {
+                const username = req.body.username;
+                const password = hashPassword(req.body.password); 
+                const firstname = req.body.firstname;
+                const lastname = req.body.lastname;
+                const newUser = new User({
+                    username: username,
+                    password: password,
+                    firstname: firstname,
+                    lastname: lastname
+                });
+                newUser.save()
+                    .then(result => {
+                        res.status(200).json({
+                            message: "Created user: " + result
+                        }).end();
+                        return;
+                    })
+                    .catch(err => {
+                        res.status(400).send(new ApiError('Error occurred: ' + err, 400)).end();
+                        return;
+                    });
+            }
+        })
+        .catch(err => {
+            res.status(400).send(new ApiError('Error occured: ' + err, 400)).end();
+        })
 
     },
 
