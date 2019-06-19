@@ -86,8 +86,6 @@ function createHmac(payload, key) {
     let hmac = forge.hmac.create();
     hmac.start('sha256', eKey);
     hmac.update(JSON.stringify(payload), 'utf8');
-    let hex = hmac.digest().toHex();
-    //console.log(hex);
     return hmac.digest().toHex();
 }
 
