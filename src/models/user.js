@@ -29,7 +29,7 @@ const UserSchema = new Schema ({
         default: 'https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png'
     },
     satoshiAmount: {
-        type: Decimal128,
+        type: Number,
         default: 0
     },
     live: {
