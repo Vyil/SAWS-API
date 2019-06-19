@@ -10,6 +10,7 @@ router.post('/loginhash',authController.loginHash);
 router.post('/auth', authController.authenticateNewDevice);
 router.put('/auth', authController.loginDevice);
 
+//router.post('/test', authController.test);
 // Verification paths
 //router.all('*', authController.verifySignature);
 //router.all('*', authController.validateToken);
