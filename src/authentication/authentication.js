@@ -94,7 +94,7 @@ function createDigitalSignature(payload, privateKey) {
 
 function buildResponse(payload) {
     let privateKey = pki.privateKeyFromPem(privateKeyPem);
-    let signature = forge.util.encode64(createDigitalSignature(payload, privateKey));
+    let signature = createDigitalSignature(payload, privateKey);
     return {
         payload: payload,
         signature: signature
