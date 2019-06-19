@@ -107,7 +107,7 @@ module.exports = {
         User.findOne({uuid:uuid})
         .then(result=>{
             result.uuid = ''
-            uuid.save()
+            result.save()
             .then(
                 res.status(200).json({message:'UUID removed from user: '+result.username}).end()
             )
