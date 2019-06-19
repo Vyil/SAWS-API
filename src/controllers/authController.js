@@ -368,4 +368,13 @@ module.exports = {
             next(new ApiError('Signature verification failed', 451));
         }
     }
+
+    /*,test(request, response, next) {
+        let key = forge.util.decode64('Fm/JVgmXDvR0yreNG4rFY0p1ft4JqGzsEO70M1+kDyg=');
+        let sign = '60661e218828879b5b4f5377c736378b4e50835e0ceeb4df07b957434e0108d8';
+        let payload = {
+            "test": "aronboi"
+        };
+        console.log(auth.createHmac(payload, key));
+    }*/
 };

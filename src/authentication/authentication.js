@@ -79,9 +79,13 @@ function verifyHmac(payload, signature, key) {
 
 function createHmac(payload, key) {
     let eKey = forge.util.encode64(key);
+    console.log(eKey);
+    console.log(JSON.stringify(payload));
     let hmac = forge.hmac.create();
     hmac.start('sha256', eKey);
-    hmac.update(JSON.stringify(payload));
+    hmac.update(JSON.stringify(payload), 'utf8');
+    let hex = hmac.digest().toHex();
+    console.log(hex);
     return hmac.digest().toHex();
 }
 
