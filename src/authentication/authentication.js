@@ -70,6 +70,8 @@ function verifyDigitalSignature(payload, signature, publicKey) {
 function verifyHmac(payload, signature, key) {
     try {
         let newHmac = createHmac(payload, key);
+        console.log(signature);
+        console.log(newHmac);
         return newHmac === signature;
     } catch(error) {
         console.log(error);
@@ -79,6 +81,7 @@ function verifyHmac(payload, signature, key) {
 
 function createHmac(payload, key) {
     let eKey = forge.util.encode64(key);
+    "htht\/tyy"
     console.log(eKey);
     console.log(JSON.stringify(payload));
     let hmac = forge.hmac.create();
