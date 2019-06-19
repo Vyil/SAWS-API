@@ -193,14 +193,7 @@ module.exports = {
                 return;
             }
 
-            let requestPayload = {
-                username: username,
-                password: password,
-                uuid: uuid,
-                key: forge.util.encode64(key),
-                iv: forge.util.encode64(iv)
-            };
-            let verified = auth.verifyHmac(requestPayload, signature, key);
+            let verified = auth.verifyHmac(request.body.payload, signature, key);
             if(verified) {
                 User.findOne({
                     username: username,
