@@ -5,36 +5,40 @@ const User = require('../models/user');
 const assert = require('assert');
 
 module.exports = {
-    startSatoshi(req, res){
+    startSatoshi(user){
         console.log('count has started.')
 
-        User.findOne({username: req.body.username})
+        User.findOne({username: user})
         .then(result => {
             if (result){
                 satoshi.start();
             }else {
-                res.status().send(new ApiError('Username does not exisit', 409)).end();
+                console.log('No user found')
             }
         })
     },
 
-    stopSatoshi(req, res){
+    stopSatoshi(user){
         try {
-            const newSatoshiAmount = user.satoshiAmount + satoshi.getAmount;
-        User.findOne({username: req.body.username})
+            
+        User.findOne({username: user})
         .then(result => {
             if (result){
-                User.updateOne({satoshiAmount: satoshiAmount}, {satoshiAmount: newSatoshiAmount})
-                    .then(() => res.status(200).json('satoshi amount updated').end())
-                    .catch((error) => next(new ApiError(error.toString(), 500)));
-                satoshi.stop();
+                const newSatoshiAmount = result.satoshiAmount + satoshi.getAmount;
+                //User.updateOne({satoshiAmount: satoshiAmount}, {satoshiAmount: newSatoshiAmount})
+                result.satoshiAmount = newSatoshiAmount;
+                result.save()
+                    .then(() => 
+                    console.log('Satoshi updated')
+                    .catch((error) => next(new ApiError(error.toString(), 500))));
+                    satoshi.stop();
             }else {
-                res.status().send(new ApiError('Username does not exisit', 409)).end();
+                console.log('No User found')
             }
         })
         }
         catch(error){
-            next(new ApiError(error.message, 422))
+            console.log('Error: '+error)
         }
 
     }

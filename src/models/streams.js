@@ -15,7 +15,8 @@ const streamSchema = new mongoose.Schema({
     viewers: {
         type: Number,
         required: false,
-        minlength: 1
+        minlength: 1,
+        default:0
     },
     live: {
         type: Boolean,

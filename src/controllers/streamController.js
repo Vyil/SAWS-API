@@ -1,6 +1,7 @@
 const Streams = require("../models/streams");
 const User = require('../models/user');
 const ApiError = require('../models/ApiError');
+const SatoshiController = require('../controllers/satoshiController')
 
 
 module.exports = {
@@ -57,6 +58,7 @@ module.exports = {
                         newStream.save()
                     ])
                         .then(result => {
+                            SatoshiController.startSatoshi(rslt.username)
                             res.status(200).json({ message: 'Stream created: ' + result }).end()
                             return;
                         })
@@ -79,8 +81,9 @@ module.exports = {
                             rslt.save(),
                             result.save()
                         ])
+                        SatoshiController.startSatoshi(rslt.username)
                             .then(
-                                res.status(200).json({ message: 'Closed stream: ' + result._id }).end()
+                                res.status(200).json({ message: 'Closed stream: ' + rslt.username }).end()
                             )
 
                     })
