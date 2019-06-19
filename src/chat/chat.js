@@ -25,7 +25,7 @@ module.exports = (io) => {
     function increaseViewer(stream) {
         Streams.findOne({username: stream, live: true})
             .then((result) => {
-                result.viewerCount++;
+                result.viewers++;
                 result.save()
                 .then(()=> console.log('Viewercount increased'))
             })
@@ -37,7 +37,7 @@ module.exports = (io) => {
     function decreaseViewer(stream) {
         Streams.findOne({username: stream, live: true})
             .then((result) => {                
-                result.viewerCount--;
+                result.viewers--;
                 result.save()
                 .then(()=> console.log('Viewercount decreased'))
             })

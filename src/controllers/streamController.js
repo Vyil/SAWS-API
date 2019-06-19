@@ -83,7 +83,7 @@ module.exports = {
                         ])
                         SatoshiController.startSatoshi(rslt.username)
                             .then(
-                                res.status(200).json({ message: 'Closed stream: ' + result._id }).end()
+                                res.status(200).json({ message: 'Closed stream: ' + rslt.username }).end()
                             )
 
                     })
