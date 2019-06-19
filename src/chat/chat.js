@@ -23,21 +23,11 @@ module.exports = (io) => {
     })
 
     function increaseViewer(stream) {
-        let viewerCount
         Streams.findOne({username: stream, live: true})
             .then((result) => {
-                if(result.viewers === undefined){
-                    viewerCount = 0
-                    console.log('Viewercount= ' + viewerCount)
-                }else{
-                    viewerCount = result.viewers
-                    console.log('Viewercount= ' + viewerCount)
-                }
-                viewerCount++;
-
-                result.findOne({_id: result._id})
-                    .update({viewers: viewerCount})
-                    .then(()=> console.log('Viewercount increased'))
+                result.viewerCount++;
+                result.save()
+                .then(()=> console.log('Viewercount increased'))
             })
             .catch(err => {
                 console.log(err)
@@ -45,21 +35,11 @@ module.exports = (io) => {
     }
 
     function decreaseViewer(stream) {
-        let viewerCount
         Streams.findOne({username: stream, live: true})
-            .then((strresulteam) => {
-                if(result.viewers === undefined){
-                    viewerCount = 0
-                    console.log('Viewercount= ' + viewerCount)
-                }else{
-                    viewerCount = stream.viewers
-                    console.log('Viewercount= ' + viewerCount)
-                }
-                viewerCount--;
-
-                Streams.findOne({_id: result._id})
-                    .update({viewers: viewerCount})
-                    .then(()=> console.log('Viewercount decreased'))
+            .then((result) => {                
+                result.viewerCount--;
+                result.save()
+                .then(()=> console.log('Viewercount decreased'))
             })
             .catch(err => {
                 console.log(err)
