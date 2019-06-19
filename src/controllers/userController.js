@@ -9,7 +9,7 @@ module.exports = {
 
     createNewUser(req, res) {
         console.log('CreateNewUser called ');
-
+        //Create user with hashed password isntead.
         User.findOne({
             username: req.body.username
         })
