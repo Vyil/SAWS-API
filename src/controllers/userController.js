@@ -99,5 +99,21 @@ module.exports = {
                     res.status(500).json(new ApiError(err, 500)).end()
                 });
         }
+    },
+
+    removeUUID(req,res){
+        let uuid = req.body.uuid;
+
+        User.findOne({uuid:uuid})
+        .then(result=>{
+            result.uuid = ''
+            uuid.save()
+            .then(
+                res.status(200).json({message:'UUID removed from user: '+result.username}).end()
+            )
+        })
+        .catch(err=>{
+            res.status(500).json(new ApiError('Something went wrong: '+err,500)).end()
+        })
     }
 };
