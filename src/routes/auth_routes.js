@@ -8,6 +8,7 @@ router.post('/login', authController.login);
 router.post('/loginuuid', authController.loginUUID);
 router.post('/auth', authController.authenticateNewDevice);
 router.put('/auth', authController.loginDevice);
+
 // Verification paths
 //router.all('*', authController.verifySignature);
 //router.all('*', authController.validateToken);

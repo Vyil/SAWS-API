@@ -14,7 +14,8 @@ const pki = forge.pki;
 
 // Import relevant keys
 const publicKeyPem = config.publicKey;
-const privateKeyPem = config.privateKey;
+const privateKeyPem = config.privatePKCS8Key;
+//const pkcs8KeyPem = config.privatePKCS8Key;
 
 module.exports = {
     //Authentication controller only login authentication
@@ -207,15 +208,24 @@ module.exports = {
 
                         certificate.setSubject(attributes);
                         certificate.setIssuer(attributes);
-                        certificate.sign(keypair.privateKey);
+
+                        let rsaPrivateKey = pki.privateKeyToAsn1(keypair.privateKey);
+                        let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
+                        let newPrivateKeyPem = pki.privateKeyInfoToPem(privateKeyInfo);
+                        let privateKey = pki.privateKeyFromPem(newPrivateKeyPem);
+                        certificate.sign(privateKey);
 
                         let pemCertificate = pki.certificateToPem(certificate);
+                        let publicKey = pki.publicKeyToPem(keypair.publicKey).toString().replace(/  |\r\n|\n|\r/gm, '');
+                        pemCertificate = pemCertificate.toString().replace(/  |\r\n|\n|\r/gm, '');
+                        newPrivateKeyPem.toString().replace(/  |\r\n|\n|\r/gm, '');
+
 
                         let newCertificate = new Certificate({
                             username: username,
                             certificate: pemCertificate,
                             publicKey: pki.publicKeyToPem(keypair.publicKey),
-                            privateKey: pki.privateKeyToPem(keypair.privateKey)
+                            privateKey: newPrivateKeyPem
                         });
 
                         newCertificate.save()
@@ -223,12 +233,12 @@ module.exports = {
                                 let unencryptedPayload = {
                                     certificate: pemCertificate,
                                     publicKey: pki.publicKeyToPem(keypair.publicKey),
-                                    privateKey: pki.privateKeyToPem(keypair.privateKey)
+                                    privateKey: newPrivateKeyPem
                                 };
                                 let payload = {
                                     certificate: auth.encryptAES(pemCertificate, key, iv),
                                     publicKey: auth.encryptAES(pki.publicKeyToPem(keypair.publicKey), key, iv),
-                                    privateKey: auth.encryptAES(pki.privateKeyToPem(keypair.privateKey), key, iv)
+                                    privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
                                 };
                                 response.status(200).json({
                                     payload: payload,

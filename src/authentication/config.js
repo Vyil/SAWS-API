@@ -35,7 +35,35 @@ const config = {
     'L+wJSQKBgQC5AoLC+ewQFRfGdfvtVTQBOc69fxnLp7qD1a63w73OCtELMbdVaAi6\n' +
     'ayxVVfQ+dP5banTWd178pmcUNAxb3kZwPwSsXfOKSIKvl5gjwKtyRcEDM1qtBdU6\n' +
     'Mn7Ue57bOfszfs0nhSByAEo359crYh9sbLZD4KiXri4dbFLP0BxHIQ==\n' +
-    '-----END RSA PRIVATE KEY-----\n'
+    '-----END RSA PRIVATE KEY-----\n',
+    privatePKCS8Key: '-----BEGIN PRIVATE KEY-----\n' +
+    'MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDIHO5/aWTzqmt7\n' +
+            'uL+u4nEsYi5HVCvex82IwAYTOjGDhkm5wk3EnppBsqPFNa0jZ4if/Z8FW5KdYHRo\n' +
+        '0Ofb9H9mYJN8xPWIcLhtExAOB1WCmrJy7yQ+PNfBNTLAstI0Hu+bBoZCYz2N2w2j\n' +
+        'eFam4OvVYaT0uYBxgpNRHBJaU9KHaKi4JXwDpWqRHl8A0B81dLm+Y5PJ6AD96cXw\n' +
+        'XCW50nE5AN+/QC8o1YTaXLAWDWMEOt0ud34cxh4K9UB8f8YPAMJ8IgdJul6DGF9Z\n' +
+        'RR0nKA6UEIiODXhs7bSGEWYdy2lC+3B5ttrTYobesZnQWbtoRTW4iltF6URAwJRW\n' +
+        'Pxrfn0JrAgMBAAECggEBAL0sLIIiHh8C4ezpr7shsZ8liV5AweAuvawi6xtODfSq\n' +
+        'BBQpDN9sl6K3v330yiIIA+5LEgM8mBNSVXmo0ybpsW4UqhhvETXUaWQjey/n2vxG\n' +
+        'RZ/FVlvHpKavJbVo1rIS9Kt2tYEY093AUNpSLog/ZHIphokau8OSjrVEdk0RpJn/\n' +
+        'txrhRnS5HFCDXUSrQDfD8xA0++o+1OKC5xMm1GrkRT7G6k8UcNFQmCmg5Wq1nXaZ\n' +
+        'RIVg9TWq/QNZXtGAENTFGd1OJvw36ip0AuRiaeWys+Xkm4Hd1PTE5kKpdQg4gARX\n' +
+        'BAXlgiq8h+Wbh5YDDBTEhJbB0MnO9xFsh1TnBed5maECgYEA9HmWPgPop4G3wzbX\n' +
+        'TmWXoXjRCwIO1a2G61G6kSQOkvBzB5PAAQrhsRhNepd6BS3DtwOiV9/kwFzX8FqF\n' +
+        'POWEbmwO2KM/7xv/6Vuxh8xa9LLDDoO79ypYV7gOGS7AX5vRFUm4C/CK00jvntqQ\n' +
+        'OJAS0bbkZRPUm/oi/J63mfd4EfMCgYEA0Yv3/D/A7D4BAmnhybeTEajmSpqhvqz0\n' +
+        'TBp2WArsfHsH99z2g/3EDdRikMpnVY5fsu2+7sptvR83eg2rfMVEGrt9pg7iZ8o1\n' +
+        'EwI1EqoLSFbEkPaWEc6BUU2DmnphH/Z9PH+uP53zCW7Rt/sOna3bXPGMR0kUumOs\n' +
+        'lssuGz0YM6kCgYB+K84FXYESChlrz37ZAAd8l1zToJFFaBQsmHZ/96rp3NyQ+Yjr\n' +
+        'QNFv04oRDeI0kATlDCQZ0/w75u6vJhiDcDSjxHL5DW+umLW/msoJusbqaOPQNt6o\n' +
+        'VhtX0i68gmtYLJOAuBYbW15aYtcAFe6+smR0BT7kh5J/mV27ILLC7Hv0TwKBgBtV\n' +
+        'm9q+4kau6+jJsRdkJ/4kvy26MCE0ZIXM6eUgP6sZTXfKzil3n+yB6P2kOYiSku8/\n' +
+        'TinOJDSIbu8v+0/CV9j43jIcPPJ3ESdSoWO25NPh5bBXSko2Wu4lI2ayUhseR0Xu\n' +
+        'DefkjcCMQTUzvbtZ44SjSb4+zUJnICtng7Mv7AlJAoGBALkCgsL57BAVF8Z1++1V\n' +
+        'NAE5zr1/GcunuoPVrrfDvc4K0Qsxt1VoCLprLFVV9D50/ltqdNZ3XvymZxQ0DFve\n' +
+        'RnA/BKxd84pIgq+XmCPAq3JFwQMzWq0F1ToyftR7nts5+zN+zSeFIHIASjfn1yti\n' +
+        'H2xstkPgqJeuLh1sUs/QHEch\n' +
+        '-----END PRIVATE KEY-----'
 };
 
 module.exports = config;
