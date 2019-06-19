@@ -1,8 +1,4 @@
-const config = require('./config');
-const moment = require('moment');
-const jwt = require('jwt-simple');
 var seconds = 0;
-var el = document.getElementById('seconds-counter');
 
 var bitcoint = 0;
 
