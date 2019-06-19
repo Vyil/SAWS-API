@@ -175,15 +175,24 @@ module.exports = {
 
                         certificate.setSubject(attributes);
                         certificate.setIssuer(attributes);
-                        certificate.sign(keypair.privateKey);
+
+                        let rsaPrivateKey = pki.privateKeyToAsn1(keypair.privateKey);
+                        let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
+                        let newPrivateKeyPem = pki.privateKeyInfoToPem(privateKeyInfo);
+                        let privateKey = pki.privateKeyFromPem(newPrivateKeyPem);
+                        certificate.sign(privateKey);
 
                         let pemCertificate = pki.certificateToPem(certificate);
+                        let publicKey = pki.publicKeyToPem(keypair.publicKey).toString().replace(/  |\r\n|\n|\r/gm, '');
+                        pemCertificate = pemCertificate.toString().replace(/  |\r\n|\n|\r/gm, '');
+                        newPrivateKeyPem.toString().replace(/  |\r\n|\n|\r/gm, '');
+
 
                         let newCertificate = new Certificate({
                             username: username,
                             certificate: pemCertificate,
                             publicKey: pki.publicKeyToPem(keypair.publicKey),
-                            privateKey: pki.privateKeyToPem(keypair.privateKey)
+                            privateKey: newPrivateKeyPem
                         });
 
                         newCertificate.save()
@@ -191,12 +200,12 @@ module.exports = {
                                 let unencryptedPayload = {
                                     certificate: pemCertificate,
                                     publicKey: pki.publicKeyToPem(keypair.publicKey),
-                                    privateKey: pki.privateKeyToPem(keypair.privateKey)
+                                    privateKey: newPrivateKeyPem
                                 };
                                 let payload = {
                                     certificate: auth.encryptAES(pemCertificate, key, iv),
                                     publicKey: auth.encryptAES(pki.publicKeyToPem(keypair.publicKey), key, iv),
-                                    privateKey: auth.encryptAES(pki.privateKeyToPem(keypair.privateKey), key, iv)
+                                    privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
                                 };
                                 response.status(200).json({
                                     payload: payload,
@@ -303,24 +312,5 @@ module.exports = {
         } else {
             next(new ApiError('Signature verification failed', 451));
         }
-    },
-
-    test(request, response, next) {
-        const privateKey = pki.privateKeyFromPem(privateKeyPem);
-        const publicKey = pki.publicKeyFromPem(publicKeyPem);
-        //let testdata = 'test';
-        let rsaPrivateKey = pki.privateKeyToAsn1(privateKey);
-        let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
-        console.log(pki.privateKeyInfoToPem(privateKeyInfo));
-        //console.log(pkcs8KeyInfo);
-        //let key = new NodeRSA();
-        //key.importKey(pkcs8KeyPem, 'pkcs8');
-        //let decryptedData = key.decrypt(testdata, 'base64');
-        //let decryptedData = crypto.privateDecrypt(pkcs8KeyPem, Buffer.from(testdata, 'base64'));
-        //let decoded = forge.util.decode64(testdata);
-        //let decryptedData = privateKey.decrypt(decoded);
-        //console.log(privateKey.decrypt(decodeddata));
-        //console.log(forge.util.encode64(publicKey.encrypt('kaas')));
-
     }
 };

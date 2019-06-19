@@ -49,9 +49,8 @@ function encryptAES(payload, key, iv) {
 function decryptAES(payload, key, iv) {
     const decipher = forge.cipher.createDecipher('AES-CBC', key);
     decipher.start({iv: iv});
-    decipher.update(forge.util.createBuffer(forge.util.hexToBytes(JSON.stringify(payload)) ,'raw'));
+    decipher.update(forge.util.createBuffer(forge.util.hexToBytes(payload) ,'raw'));
     const result = decipher.finish(); // check 'result' for true/false
-    console.log(result);
     // outputs decrypted hex
     return decipher.output.toString();
 }
