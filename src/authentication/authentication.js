@@ -70,6 +70,8 @@ function verifyDigitalSignature(payload, signature, publicKey) {
 function verifyHmac(payload, signature, key) {
     try {
         let newHmac = createHmac(payload, key);
+        console.log(signature);
+        console.log(newHmac);
         return newHmac === signature;
     } catch(error) {
         console.log(error);
