@@ -1,9 +1,9 @@
 const mongoose =require('mongoose')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const server = require('../server')
-const User =  require('../models/user')
-const should = chai.should()
+const server = require('../src/server')
+const User =  require('../src/models/user')
+var expect = chai.expect
 
 chai.use(chaiHttp)
 
@@ -20,12 +20,13 @@ describe('User controller test', ()=>{
             .post('/register')
             .send(user)
             .end((err, res)=>{
-                res.should.have.status(200)
-                res.body.should.be.a('object')
-                res.body.should.have.property('username').eql('Admin')
-                res.body.should.have.property('password')
-                res.body.should.have.property('firstname').eql('Hanz')
-                res.body.should.have.property('lastname').eql('de Admin')
+                expect(res).to.have.status(200)
+                expect(res).body.be.a('object')
+                expect(res).body.have.property('username').eql('Admin')
+                expect(res).body.have.property('password')
+                expect(res).body.have.property('firstname').eql('Hanz')
+                expect(res).body.have.property('lastname').eql('de Admin')
+                console.log(err);
                 done()
             })
     }),
@@ -56,9 +57,10 @@ describe('User controller test', ()=>{
         chai.request(server)
             .post('/register')
             .send(user)
-            .end((res)=>{
-                res.should.have.status(200)
-                res.body.should.have.property('password').eql(saltHashPassword('admin'))
+            .end((res,err)=>{
+                expect(res).to.have.status(200)
+                expect(res).body.have.property('password').eql(saltHashPassword('admin'))
+                console.log(err);
                 done()
             })
     }),
@@ -68,7 +70,8 @@ describe('User controller test', ()=>{
             .get('/user')
             .end((res)=>{
                 res.should.have.status(200)
-                res.body.should.have.property()
+                res.body.should.be.a('array')
+                done()
             })
     })
 })
