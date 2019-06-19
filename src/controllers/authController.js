@@ -216,9 +216,9 @@ module.exports = {
                         certificate.sign(privateKey);
 
                         let pemCertificate = pki.certificateToPem(certificate);
-                        let publicKey = pki.publicKeyToPem(keypair.publicKey).toString().replace(/  |\r\n|\n|\r/gm, '');
-                        pemCertificate = pemCertificate.toString().replace(/  |\r\n|\n|\r/gm, '');
-                        newPrivateKeyPem = newPrivateKeyPem.toString().replace(/  |\r\n|\n|\r/gm, '');
+                        let publicKey = pki.publicKeyToPem(keypair.publicKey).replace(/  |\r\n|\n|\r/gm, '');
+                        pemCertificate = pemCertificate.replace(/  |\r\n|\n|\r/gm, '');
+                        newPrivateKeyPem = newPrivateKeyPem.replace(/  |\r\n|\n|\r/gm, '');
 
 
                         let newCertificate = new Certificate({
