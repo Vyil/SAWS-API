@@ -5,23 +5,23 @@ const User = require('../models/user');
 const assert = require('assert');
 
 module.exports = {
-    startSatoshi(req, res){
+    startSatoshi(user){
         console.log('count has started.')
 
-        User.findOne({username: req.body.username})
+        User.findOne({username: user})
         .then(result => {
             if (result){
                 satoshi.start();
             }else {
-                res.status().send(new ApiError('Username does not exisit', 409)).end();
+                console.log('No user found')
             }
         })
     },
 
-    stopSatoshi(req, res,next){
+    stopSatoshi(user){
         try {
             
-        User.findOne({username: req.body.username})
+        User.findOne({username: user})
         .then(result => {
             if (result){
                 const newSatoshiAmount = result.satoshiAmount + satoshi.getAmount;
@@ -29,16 +29,16 @@ module.exports = {
                 result.satoshiAmount = newSatoshiAmount;
                 result.save()
                     .then(() => 
-                    res.status(200).json('satoshi amount updated').end())
-                    .catch((error) => next(new ApiError(error.toString(), 500)));
+                    console.log('Satoshi updated')
+                    .catch((error) => next(new ApiError(error.toString(), 500))));
                     satoshi.stop();
             }else {
-                res.status().send(new ApiError('Username does not exisit', 409)).end();
+                console.log('No User found')
             }
         })
         }
         catch(error){
-            next(new ApiError(error.message, 422))
+            console.log('Error: '+error)
         }
 
     }
