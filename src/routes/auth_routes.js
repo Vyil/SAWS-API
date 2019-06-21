@@ -7,10 +7,15 @@ const authController = require('../controllers/authController');
 router.post('/login', authController.login);
 router.post('/loginuuid', authController.loginUUID);
 router.post('/loginhash',authController.loginHash);
+
+// ---------------------------------------------------------
+// Request authentication for a new device
 router.post('/auth', authController.authenticateNewDevice);
+// Login authenticated device using certificate
 router.put('/auth', authController.loginDevice);
 // Route for destroying the session and certificate in case it becomes compromised
-router.delete('/auth', authController.compromise);
+//router.delete('/auth', authController.compromise);
+// ---------------------------------------------------------
 //router.post('/test', authController.test);
 // Verification paths
 //router.all('*', authController.verifySignature);
