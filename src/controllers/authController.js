@@ -144,7 +144,6 @@ module.exports = {
     },
 
     authenticateNewDevice(request, response, next) {
-
         try {
             // Request uniform assertions
             const body = request.body;
@@ -170,11 +169,6 @@ module.exports = {
             next(new ApiError(error.message, 412));
             return;
         }
-
-        //console.log("Username: " + crypto.publicEncrypt(publicKey, Buffer.from('aron', 'utf8')).toString('base64'));
-        //console.log("Password: " + crypto.publicEncrypt(publicKey, Buffer.from('c96b8d3274dcd24eceb36699d094fecbb2416c7770082e0707c7b76b29da2548', 'utf8')).toString('base64'));
-        //console.log("Uuid: " + crypto.publicEncrypt(publicKey, Buffer.from('v743984nw748v9wfhw784w', 'utf8')).toString('base64'));
-        //console.log("Passphrase: " + crypto.publicEncrypt(publicKey, Buffer.from('v983v4b73894478', 'utf8')).toString('base64'));
 
         try {
             let username, password, uuid, key, iv, signature;
@@ -242,7 +236,6 @@ module.exports = {
                         pemCertificate = pemCertificate.replace(/  |\r\n|\n|\r/gm, '');
                         newPrivateKeyPem = newPrivateKeyPem.replace(/  |\r\n|\n|\r/gm, '');
 
-
                         let newCertificate = new Certificate({
                             username: username,
                             certificate: pemCertificate,
@@ -252,11 +245,6 @@ module.exports = {
 
                         newCertificate.save()
                             .then(result => {
-                                let unencryptedPayload = {
-                                    certificate: pemCertificate,
-                                    publicKey: publicKey,
-                                    privateKey: newPrivateKeyPem
-                                };
                                 let payload = {
                                     certificate: auth.encryptAES(pemCertificate, key, iv),
                                     publicKey: auth.encryptAES(publicKey, key, iv),
@@ -265,7 +253,7 @@ module.exports = {
                                 request.session.certificateId = newCertificate._id;
                                 response.status(200).json({
                                     payload: payload,
-                                    signature: auth.createHmac(unencryptedPayload, key)
+                                    signature: auth.createHmac(payload, key)
                                 });
                             })
                             .catch(error => {

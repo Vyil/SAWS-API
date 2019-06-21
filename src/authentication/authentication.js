@@ -39,7 +39,7 @@ function decodeToken(token, callback) {
 function encryptAES(payload, key, iv) {
     const cipher = forge.cipher.createCipher('AES-CBC', key);
     cipher.start({iv: iv});
-    cipher.update(forge.util.createBuffer(JSON.stringify(payload), 'utf8'));
+    cipher.update(forge.util.createBuffer(payload, 'utf8'));
     cipher.finish();
     const encrypted = cipher.output;
     // outputs encrypted hex
