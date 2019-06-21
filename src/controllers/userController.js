@@ -45,9 +45,9 @@ module.exports = {
                 });
                 newUser.save()
                     .then(result => {
-                        res.status(200).json({
+                        res.status(200).json(auth.buildResponse({
                             message: "Created user: " + result
-                        }).end();
+                        })).end();
                         return;
                     })
                     .catch(err => {
@@ -63,13 +63,13 @@ module.exports = {
     },
 
     getUserByUUID(req, res, next) {
-        console.log('GetUserByUUID called')
+        console.log('GetUserByUUID called');
 
         User.findOne({
             uuid: req.body.uuid
         })
             .then((user) => {
-                res.status(200).json(user).end()
+                res.status(200).json(auth.buildResponse(user)).end()
             })
             .catch(error => next(new ApiError(error, 500)))
     },
@@ -81,18 +81,18 @@ module.exports = {
         if (!queryParam) {
             User.find({})
                 .then(rslt => {
-                    res.status(200).json(rslt).end()
+                    res.status(200).json(auth.buildResponse(rslt)).end();
                     return;
                 })
                 .catch(err => {
-                    res.status(500).json(new ApiError(err, 500)).end()
+                    res.status(500).json(new ApiError(err, 500)).end();
                     return;
                 })
         } else {
             //Query param is find specific
             User.findOne({ username: queryParam })
                 .then((user) => {
-                    res.status(200).json(user).end()
+                    res.status(200).json(auth.buildResponse(user)).end();
                     return;
                 })
                 .catch(err => {
@@ -106,10 +106,10 @@ module.exports = {
 
         User.findOne({uuid:uuid})
         .then(result=>{
-            result.uuid = ''
+            result.uuid = '';
             result.save()
             .then(
-                res.status(200).json({message:'UUID removed from user: '+result.username}).end()
+                res.status(200).json(auth.buildResponse({message:'UUID removed from user: '+result.username})).end()
             )
         })
         .catch(err=>{

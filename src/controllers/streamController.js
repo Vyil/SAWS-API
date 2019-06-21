@@ -1,7 +1,8 @@
 const Streams = require("../models/streams");
 const User = require('../models/user');
 const ApiError = require('../models/ApiError');
-const SatoshiController = require('../controllers/satoshiController')
+const SatoshiController = require('../controllers/satoshiController');
+const auth = require('../authentication/authentication');
 
 
 module.exports = {
@@ -11,7 +12,7 @@ module.exports = {
             .populate("User")
             .then((streams, err) => {
                 if (err) throw err;
-                res.status(200).json(streams)
+                res.status(200).json(auth.buildResponse(streams));
             })
             .catch((err) => {
                 console.log(err);
@@ -21,13 +22,13 @@ module.exports = {
 
     },
     getViewerCount(request, response) {
-        console.log('GetViewCount called')
+        console.log('GetViewCount called');
 
         Streams.findOne({ username: request.query.username, live: true })
             .then((stream) => {
                 if(stream!=null){
                     console.log('Viewcount = ' + stream.viewers);
-                    response.status(200).json({viewers: stream.viewers}).end()
+                    response.status(200).json(auth.buildResponse({viewers: stream.viewers})).end();
                 }else{
                     response.status(400).json(new ApiError('Stream not found', 400)).end()
                 }
@@ -43,12 +44,12 @@ module.exports = {
             live: true,
             uuid: req.body.uuid,
             username: ''
-        })
+        });
 
         User.findOne({ uuid: req.body.uuid })
             .then(rslt => {
                 if (rslt.live) {
-                    res.status(500).json(new ApiError('User is already live!', 500)).end()
+                    res.status(500).json(new ApiError('User is already live!', 500)).end();
                     return;
                 } else {
                     newStream.username = rslt.username;
@@ -58,14 +59,14 @@ module.exports = {
                         newStream.save()
                     ])
                         .then(result => {
-                            SatoshiController.startSatoshi(rslt.username)
-                            res.status(200).json({ message: 'Stream created: ' + result }).end()
+                            SatoshiController.startSatoshi(rslt.username);
+                            res.status(200).json(auth.buildResponse({ message: 'Stream created: ' + result })).end();
                             return;
                         })
                 }
             })
             .catch(err => {
-                res.status(500).json(new ApiError(err, 500)).end()
+                res.status(500).json(new ApiError(err, 500)).end();
                 return;
             })
     },
@@ -80,16 +81,16 @@ module.exports = {
                         Promise.all([
                             rslt.save(),
                             result.save()
-                        ])
+                        ]);
                         SatoshiController.startSatoshi(rslt.username)
                             .then(
-                                res.status(200).json({ message: 'Closed stream: ' + rslt.username }).end()
+                                res.status(200).json(auth.buildResponse({ message: 'Closed stream: ' + rslt.username })).end()
                             )
 
                     })
             })
             .catch(err => {
-                res.status(500).json(new ApiError('Database error, are you sure streamID exists? :' + err, 500)).end()
+                res.status(500).json(new ApiError('Database error, are you sure streamID exists? :' + err, 500)).end();
                 return;
             })
     },
@@ -97,11 +98,11 @@ module.exports = {
     getLiveStreams(req, res) {
         User.find({ live: true })
             .then(result => {
-                res.status(200).json(result).end()
+                res.status(200).json(auth.buildResponse(result)).end();
                 return;
             })
             .catch(err => {
-                res.status(500).json(new ApiError(err, 500)).end()
+                res.status(500).json(new ApiError(err, 500)).end();
                 return;
             })
     },
@@ -109,7 +110,7 @@ module.exports = {
     getUserLive(req,res){
         User.findOne({username: req.params.username})
             .then((result)=>{
-                res.status(200).json({live: result.live}).end()
+                res.status(200).json(auth.buildResponse({live: result.live})).end()
             })
             .catch(err =>{
                 res.status(500).json(new ApiError(err, 500)).end()

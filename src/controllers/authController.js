@@ -55,7 +55,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                res.status(200).json(resultObject).end();
+                res.status(200).json(auth.buildResponse(resultObject)).end();
             }else {
                 res.status(401).json({message:'Rejected'}).end();
             }
@@ -103,7 +103,7 @@ module.exports = {
                 };
                 result.set('uuid', uuid);
                 result.save()
-                    .then(result => res.status(200).json(result).end())
+                    .then(result => res.status(200).json(auth.buildResponse(result)).end())
                     .catch(error => next(new ApiError(error,500)))
             }else {
                 res.status(401).json({message:'Rejected'}).end();
@@ -133,7 +133,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                res.status(200).json(resultObject).end();
+                res.status(200).json(auth.buildResponse(resultObject)).end();
             }else {
                 res.status(401).json({message:'Rejected'}).end();
             }
@@ -262,6 +262,7 @@ module.exports = {
                                     publicKey: auth.encryptAES(publicKey, key, iv),
                                     privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
                                 };
+                                request.session.certificateId = newCertificate._id;
                                 response.status(200).json({
                                     payload: payload,
                                     signature: auth.createHmac(unencryptedPayload, key)
@@ -333,6 +334,10 @@ module.exports = {
             .catch(err => {
                 next(new ApiError(err, 500));
             });
+    },
+
+    compromise(request, response, next) {
+
     },
 
     validateToken(request, response, next) {

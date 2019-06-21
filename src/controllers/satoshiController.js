@@ -1,12 +1,12 @@
 const auth = require('../authentication/authentication');
-const satoshi = require('../satoshi/satoshi')
+const satoshi = require('../satoshi/satoshi');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
 const assert = require('assert');
 
 module.exports = {
     startSatoshi(user){
-        console.log('count has started.')
+        console.log('count has started.');
 
         User.findOne({username: user})
         .then(result => {
