@@ -81,7 +81,7 @@ function createHmac(payload, key) {
     let eKey = forge.util.encode64(key);
     let hmac = forge.hmac.create();
     hmac.start('sha256', eKey);
-    hmac.update(JSON.stringify(payload));
+    hmac.update(JSON.stringify(payload), 'utf8');
     return hmac.digest().toHex();
 }
 
@@ -94,7 +94,7 @@ function createDigitalSignature(payload, privateKey) {
 
 function buildResponse(payload) {
     let privateKey = pki.privateKeyFromPem(privateKeyPem);
-    let signature = forge.util.encode64(createDigitalSignature(payload, privateKey));
+    let signature = createDigitalSignature(payload, privateKey);
     return {
         payload: payload,
         signature: signature

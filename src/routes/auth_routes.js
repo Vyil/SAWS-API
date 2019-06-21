@@ -9,7 +9,9 @@ router.post('/loginuuid', authController.loginUUID);
 router.post('/loginhash',authController.loginHash);
 router.post('/auth', authController.authenticateNewDevice);
 router.put('/auth', authController.loginDevice);
-
+// Route for destroying the session and certificate in case it becomes compromised
+router.delete('/auth', authController.compromise);
+//router.post('/test', authController.test);
 // Verification paths
 //router.all('*', authController.verifySignature);
 //router.all('*', authController.validateToken);

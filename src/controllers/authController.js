@@ -55,7 +55,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                res.status(200).json(resultObject).end();
+                res.status(200).json(auth.buildResponse(resultObject)).end();
             }else {
                 res.status(401).json({message:'Rejected'}).end();
             }
@@ -103,7 +103,7 @@ module.exports = {
                 };
                 result.set('uuid', uuid);
                 result.save()
-                    .then(result => res.status(200).json(result).end())
+                    .then(result => res.status(200).json(auth.buildResponse(result)).end())
                     .catch(error => next(new ApiError(error,500)))
             }else {
                 res.status(401).json({message:'Rejected'}).end();
@@ -133,7 +133,7 @@ module.exports = {
                     "token":token,
                     "message:":"Successful login for user: "+result.username
                 };
-                res.status(200).json(resultObject).end();
+                res.status(200).json(auth.buildResponse(resultObject)).end();
             }else {
                 res.status(401).json({message:'Rejected'}).end();
             }
@@ -193,14 +193,7 @@ module.exports = {
                 return;
             }
 
-            let requestPayload = {
-                username: username,
-                password: password,
-                uuid: uuid,
-                key: forge.util.encode64(key),
-                iv: forge.util.encode64(iv)
-            };
-            let verified = auth.verifyHmac(requestPayload, signature, key);
+            let verified = auth.verifyHmac(request.body.payload, signature, key);
             if(verified) {
                 User.findOne({
                     username: username,
@@ -269,6 +262,7 @@ module.exports = {
                                     publicKey: auth.encryptAES(publicKey, key, iv),
                                     privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
                                 };
+                                request.session.certificateId = newCertificate._id;
                                 response.status(200).json({
                                     payload: payload,
                                     signature: auth.createHmac(unencryptedPayload, key)
@@ -342,6 +336,10 @@ module.exports = {
             });
     },
 
+    compromise(request, response, next) {
+
+    },
+
     validateToken(request, response, next) {
         console.log(chalk.yellow('[TOKEN] Validation of JWT token requested'));
         const token = request.header('x-access-token') || '';
@@ -375,4 +373,13 @@ module.exports = {
             next(new ApiError('Signature verification failed', 451));
         }
     }
+
+    /*,test(request, response, next) {
+        let key = forge.util.decode64('Fm/JVgmXDvR0yreNG4rFY0p1ft4JqGzsEO70M1+kDyg=');
+        let sign = '60661e218828879b5b4f5377c736378b4e50835e0ceeb4df07b957434e0108d8';
+        let payload = {
+            "test": "aronboi"
+        };
+        console.log(auth.createHmac(payload, key));
+    }*/
 };

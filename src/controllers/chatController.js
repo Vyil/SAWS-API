@@ -4,6 +4,5 @@ const ApiError = require('../models/ApiError');
 
 module.exports ={
     saveChatMessage(req,res) {
-        
     }
-}
+};
