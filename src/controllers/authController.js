@@ -19,7 +19,6 @@ const privateKeyPem = config.privatePKCS8Key;
 
 module.exports = {
     //Authentication controller only login authentication
-
     login(req,res){
         console.log('Login called');
 
@@ -186,7 +185,6 @@ module.exports = {
                 next(new ApiError('Error during decryption of body elements', 500));
                 return;
             }
-
             let verified = auth.verifyHmac(request.body.payload, signature, key);
             if(verified) {
                 User.findOne({
@@ -194,71 +192,75 @@ module.exports = {
                     password: password
                 })
                     .then(result => {
-                        let keypair = pki.rsa.generateKeyPair(2048);
-                        let certificate = pki.createCertificate();
+                        if(result !== null) {
+                            let keypair = pki.rsa.generateKeyPair(2048);
+                            let certificate = pki.createCertificate();
 
-                        certificate.publicKey = keypair.publicKey;
-                        certificate.validity.notBefore = new Date();
-                        certificate.validity.notAfter = new Date();
-                        certificate.validity.notAfter.setFullYear(certificate.validity.notBefore.getFullYear() + 1);
+                            certificate.publicKey = keypair.publicKey;
+                            certificate.validity.notBefore = new Date();
+                            certificate.validity.notAfter = new Date();
+                            certificate.validity.notAfter.setFullYear(certificate.validity.notBefore.getFullYear() + 1);
 
-                        let attributes = [{
-                            name: 'commonName',
-                            value: username
-                        }, {
-                            name: 'countryName',
-                            value: 'NL'
-                        }, {
-                            shortName: 'ST',
-                            value: 'Noord-Brabant'
-                        }, {
-                            name: 'localityName',
-                            value: 'The Netherlands'
-                        }, {
-                            name: 'organizationName',
-                            value: 'Avans'
-                        }, {
-                            shortName: 'OU',
-                            value: username
-                        }];
+                            let attributes = [{
+                                name: 'commonName',
+                                value: username
+                            }, {
+                                name: 'countryName',
+                                value: 'NL'
+                            }, {
+                                shortName: 'ST',
+                                value: 'Noord-Brabant'
+                            }, {
+                                name: 'localityName',
+                                value: 'The Netherlands'
+                            }, {
+                                name: 'organizationName',
+                                value: 'Avans'
+                            }, {
+                                shortName: 'OU',
+                                value: username
+                            }];
 
-                        certificate.setSubject(attributes);
-                        certificate.setIssuer(attributes);
+                            certificate.setSubject(attributes);
+                            certificate.setIssuer(attributes);
 
-                        let rsaPrivateKey = pki.privateKeyToAsn1(keypair.privateKey);
-                        let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
-                        let newPrivateKeyPem = pki.privateKeyInfoToPem(privateKeyInfo);
-                        let privateKey = pki.privateKeyFromPem(newPrivateKeyPem);
-                        certificate.sign(privateKey);
+                            let rsaPrivateKey = pki.privateKeyToAsn1(keypair.privateKey);
+                            let privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
+                            let newPrivateKeyPem = pki.privateKeyInfoToPem(privateKeyInfo);
+                            let privateKey = pki.privateKeyFromPem(newPrivateKeyPem);
+                            certificate.sign(privateKey);
 
-                        let pemCertificate = pki.certificateToPem(certificate);
-                        let publicKey = pki.publicKeyToPem(keypair.publicKey).replace(/  |\r\n|\n|\r/gm, '');
-                        pemCertificate = pemCertificate.replace(/  |\r\n|\n|\r/gm, '');
-                        newPrivateKeyPem = newPrivateKeyPem.replace(/  |\r\n|\n|\r/gm, '');
+                            let pemCertificate = pki.certificateToPem(certificate);
+                            let publicKey = pki.publicKeyToPem(keypair.publicKey).replace(/  |\r\n|\n|\r/gm, '');
+                            pemCertificate = pemCertificate.replace(/  |\r\n|\n|\r/gm, '');
+                            newPrivateKeyPem = newPrivateKeyPem.replace(/  |\r\n|\n|\r/gm, '');
 
-                        let newCertificate = new Certificate({
-                            username: username,
-                            certificate: pemCertificate,
-                            publicKey: publicKey,
-                            privateKey: newPrivateKeyPem
-                        });
+                            let newCertificate = new Certificate({
+                                username: username,
+                                certificate: pemCertificate,
+                                publicKey: publicKey,
+                                privateKey: newPrivateKeyPem
+                            });
 
-                        newCertificate.save()
-                            .then(result => {
-                                let payload = {
-                                    certificate: auth.encryptAES(pemCertificate, key, iv),
-                                    publicKey: auth.encryptAES(publicKey, key, iv),
-                                    privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
-                                };
-                                request.session.certificateId = newCertificate._id;
-                                response.status(200).json({
-                                    payload: payload,
-                                    signature: auth.createHmac(payload, key)
-                                });
-                            })
-                            .catch(error => {
-                                next(new ApiError(error, 500));
-                            })
+                            newCertificate.save()
+                                .then(result => {
+                                    let payload = {
+                                        certificate: auth.encryptAES(pemCertificate, key, iv),
+                                        publicKey: auth.encryptAES(publicKey, key, iv),
+                                        privateKey: auth.encryptAES(newPrivateKeyPem, key, iv)
+                                    };
+                                    request.session.certificateId = newCertificate._id;
+                                    response.status(200).json({
+                                        payload: payload,
+                                        signature: auth.createHmac(payload, key)
+                                    });
+                                })
+                                .catch(error => {
+                                    next(new ApiError(error, 500));
+                                })
+                        } else {
+                            next(new ApiError('Invalid credentials provided', 412));
+                        }
                     })
                     .catch(err => {
                         next(new ApiError(err, 500));
@@ -298,7 +300,6 @@ module.exports = {
         username = request.body.payload.username;
         certificate = request.body.payload.certificate;
         signature = request.body.signature;
-
         Certificate.findOne({
             username: username,
             certificate: certificate
@@ -322,10 +323,6 @@ module.exports = {
             .catch(err => {
                 next(new ApiError(err, 500));
             });
-    },
-
-    compromise(request, response, next) {
-
     },
 
     validateToken(request, response, next) {
