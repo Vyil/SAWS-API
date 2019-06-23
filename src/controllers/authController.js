@@ -276,7 +276,6 @@ module.exports = {
     },
 
     loginDevice(request, response, next) {
-        console.log(request.sessionID);
         try {
             // Request uniform assertions
             const body = request.body;
@@ -330,6 +329,7 @@ module.exports = {
     },
 
     validateToken(request, response, next) {
+        console.log(request.sessionID);
         console.log(chalk.yellow('[TOKEN] Validation of JWT token requested'));
         const token = request.header('x-access-token') || '';
 
@@ -347,7 +347,6 @@ module.exports = {
 
     verifySignature(request, response, next) {
         if(request.method !== 'GET') {
-            console.log(request.sessionID);
             if(request.body.signature && request.session.publicKey) {
                 try {
                     console.log('here');
