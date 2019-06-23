@@ -19,14 +19,14 @@ module.exports = (io) => {
         console.log(query);
         const stream = query.stream;
         const username = query.username;
-        const certificate = query.certificate;
-        const signature = query.signature.replace(/[#/%2F]/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '') + '==';
+        const certificate = query.certificate.replace(/[#/]/g, '+').replace(/[%2F/]/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '');
+        const signature = query.signature.replace(/[#/]/g, '+').replace(/[%2F/]/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '') + '==';
 
         // Construct the payload
         const payload = {
             stream: stream,
             username: username,
-            certificate: certificate.replace(/[#/%2F]/g, '+').replace(/%20/g,' ')
+            certificate: certificate
         };
         console.log('Signature: ' + signature);
         console.log('Certificate: ' + certificate.replace(/[#/%2F]/g, '+').replace(/%20/g,' '));
