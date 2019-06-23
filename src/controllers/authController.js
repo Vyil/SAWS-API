@@ -367,6 +367,11 @@ module.exports = {
         } else {
             next();
         }
+    },
+
+    ping(request, response, next) {
+        //request.session.save();
+        response.status(200).json({}).end();
     }
 
     /*,test(request, response, next) {
