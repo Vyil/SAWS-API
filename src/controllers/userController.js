@@ -104,13 +104,9 @@ module.exports = {
     removeUUID(req,res, next){
         let uuid = req.body.payload.uuid;
 
-        User.findOne({uuid:uuid})
+        User.findOneAndUpdate({uuid:uuid}, {uuid: ''})
         .then(result=>{
-            result.uuid = '';
-            result.save()
-            .then(
-                res.status(200).json(auth.buildResponse({message:'UUID removed from user: '+result.username})).end()
-            )
+            res.status(200).json(auth.buildResponse({message:'UUID removed from user: '+result.username})).end()
         })
         .catch(err=>{
             next(new ApiError('Something went wrong: '+err, 500));
