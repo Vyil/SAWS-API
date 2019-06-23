@@ -45,6 +45,8 @@ app.use((err, req, res, next) => {
     res.status((err.code || 404)).json(err).end();
 });
 
+let test = "jiweorevy78v4784v4==";
+console.log(test.substring(test.length - 2, test.length));
 
 http.listen(port, () => console.log(chalk.green('[SERVER] Server running on port ' + port)));
 
