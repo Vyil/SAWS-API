@@ -113,7 +113,7 @@ module.exports = {
             )
         })
         .catch(err=>{
-            res.status(500).json(new ApiError('Something went wrong: '+err,500)).end()
+            next(new ApiError('Something went wrong: '+err, 500));
         })
     }
 };
