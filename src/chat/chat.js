@@ -39,6 +39,7 @@ module.exports = (io) => {
             certificate: payload.certificate
         }).then(result => {
             if (result !== null) {
+                console.log(result);
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
@@ -73,6 +74,8 @@ module.exports = (io) => {
                         decreaseViewer(payload.stream);
                         client.disconnect()
                     })
+                } else {
+                    console.log('not verified');
                 }
             }
         }).catch(err => {
