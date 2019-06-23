@@ -16,11 +16,14 @@ module.exports = (io) => {
 
         // Setup variables for later use
         const query = client.handshake.query;
-        console.log(query);
         const stream = query.stream;
         const username = query.username;
         const certificate = query.certificate.replace(/#/g, '+').replace(/%2F/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '');
-        const signature = query.signature.replace(/#/g, '+').replace(/%2F/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '') + '==';
+
+        let signature = query.signature.replace(/#/g, '+').replace(/%2F/g, '+').replace(/%20/g,' ').replace(/  |\r\n|\n|\r/gm, '');
+        if(signature.substring(signature.length - 2, signature.length) !== '==') {
+            signature += '==';
+        }
 
         // Construct the payload
         const payload = {
