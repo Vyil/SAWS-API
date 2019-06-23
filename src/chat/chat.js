@@ -31,6 +31,8 @@ module.exports = (io) => {
             username: username,
             certificate: certificate
         };
+        console.log('Stream: ' + stream);
+        console.log('Username: ' + username);
         console.log('Signature: ' + signature);
         console.log('Certificate: ' + certificate);
         // Find the current certificate in the database
@@ -42,6 +44,10 @@ module.exports = (io) => {
                 console.log(result);
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
+                const privateKey = pki.privateKeyFromPem(result.privateKey);
+                let testsign = auth.createDigitalSignature(payload, privateKey)
+                console.log(testsign);
+                console.log(auth.verifyDigitalSignature(payload, testsign, publicKey));
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
                     // Increase the viewer count and print a console log
                     increaseViewer(payload.stream);
