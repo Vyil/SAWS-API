@@ -8,6 +8,9 @@ const Certificate = require('../models/certificate');
 const forge = require('node-forge');
 const pki = forge.pki;
 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 module.exports = (io) => {
     // Set received path origin
     const receivedPath = io.of('/chat');
