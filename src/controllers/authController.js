@@ -276,7 +276,7 @@ module.exports = {
     },
 
     loginDevice(request, response, next) {
-
+        console.log(request.sessionID);
         try {
             // Request uniform assertions
             const body = request.body;
@@ -308,13 +308,15 @@ module.exports = {
         })
             .then(result => {
                 if(result !== null) {
-                    request.session.key = result.publicKey;
+                    request.session.publicKey = result.publicKey;
+                    request.session.save();
                     let verified = auth.verifyDigitalSignature(request.body.payload, signature, pki.publicKeyFromPem(result.publicKey));
                     if(verified) {
                         let token = auth.encodeToken(username);
                         response.status(200).json(auth.buildResponse({
                             token: token
                         })).end();
+
                     } else {
                         next(new ApiError('Signature verification failed', 451));
                     }
@@ -345,8 +347,10 @@ module.exports = {
 
     verifySignature(request, response, next) {
         if(request.method !== 'GET') {
-            if(request.body.signature && request.session.key) {
+            console.log(request.sessionID);
+            if(request.body.signature && request.session.publicKey) {
                 try {
+                    console.log('here');
                     const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
                     if(verified) {
                         response.status(200).json({}).end();
