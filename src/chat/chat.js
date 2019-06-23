@@ -16,6 +16,7 @@ module.exports = (io) => {
 
         // Setup variables for later use
         const query = client.handshake.query;
+        console.log(query);
         const payload = query.payload;
         const signature = query.signature;
 
@@ -27,7 +28,7 @@ module.exports = (io) => {
             if (result !== null) {
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
-
+                console.log('Found certificate');
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
                     // Increase the viewer count and print a console log
                     increaseViewer(payload.stream);
