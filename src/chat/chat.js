@@ -63,7 +63,7 @@ module.exports = (io) => {
                         };
                         // Verify the signature, save it to the database and broadcast the message to all listeners with a new signature
                         if(auth.verifyDigitalSignature(payload, newMessageSignature, publicKey)) {
-                            //saveMessageDB(payload.stream, msg);
+                            saveMessageDB(stream, msg);
                             receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(payload))
                         }
                     });
