@@ -18,8 +18,8 @@ router.put('/auth', authController.loginDevice);
 // ---------------------------------------------------------
 //router.post('/test', authController.test);
 // Verification paths
-//router.all('*', authController.verifySignature);
-//router.all('*', authController.validateToken);
+router.all('*', authController.verifySignature);
+router.all('*', authController.validateToken);
 
 // Test Verification paths
 router.all('/signature', authController.verifySignature);
