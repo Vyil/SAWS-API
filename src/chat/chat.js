@@ -121,7 +121,9 @@ module.exports = (io) => {
                 if(!rslt){
                     return;
                 } else {
-                    streamID = rslt._id
+                    console.log(rslt);
+                    streamID = rslt._id;
+                    console.log(streamID);
                 }                
             })
             .then(
