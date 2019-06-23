@@ -18,6 +18,7 @@ module.exports = (io) => {
         const query = client.handshake.query;
         const stream = query.stream;
         const username = query.username;
+        const uncorrectedCertificate = query.certificate
         const certificate = query.certificate.replace(/#/g, '+').replace(/  |\r\n|\n|\r/gm, '');
 
         let signature = query.signature.replace(/#/g, '+').replace(/  |\r\n|\n|\r/gm, '');
@@ -29,23 +30,25 @@ module.exports = (io) => {
         const payload = {
             stream: stream,
             username: username,
-            certificate: certificate
+            certificate: uncorrectedCertificate
         };
+
         console.log('Stream: ' + stream);
         console.log('Username: ' + username);
         console.log('Signature: ' + signature);
         console.log('Certificate: ' + certificate);
+
         // Find the current certificate in the database
         Certificate.findOne({
             username: payload.username,
             certificate: payload.certificate
         }).then(result => {
             if (result !== null) {
-                console.log(result);
+                console.log(payload);
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
                 const privateKey = pki.privateKeyFromPem(result.privateKey);
-                let testsign = auth.createDigitalSignature(payload, privateKey)
+                let testsign = auth.createDigitalSignature(payload, privateKey);
                 console.log(testsign);
                 console.log(auth.verifyDigitalSignature(payload, testsign, publicKey));
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
