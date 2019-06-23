@@ -29,7 +29,7 @@ module.exports = (io) => {
             certificate: certificate
         };
         console.log('Signature: ' + signature);
-        console.log('Certificate: ' + certificate.replace(/[#/%2F]/g, '+').replace(/%20/g,' '));
+        console.log('Certificate: ' + certificate);
         // Find the current certificate in the database
         Certificate.findOne({
             username: payload.username,
