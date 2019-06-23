@@ -47,6 +47,7 @@ module.exports = (io) => {
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
+                    console.log('Verified');
                     // Increase the viewer count and print a console log
                     increaseViewer(payload.stream);
                     console.log('client connected: ' + payload.stream);
