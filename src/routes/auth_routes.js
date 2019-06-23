@@ -22,6 +22,6 @@ router.all('*', authController.verifySignature);
 router.all('*', authController.validateToken);
 
 // Test Verification paths
-router.all('/signature', authController.verifySignature);
-router.all('/token', authController.validateToken);
+//router.all('/signature', authController.verifySignature);
+//router.all('/token', authController.validateToken);
 module.exports = router;

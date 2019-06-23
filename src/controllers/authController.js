@@ -344,20 +344,24 @@ module.exports = {
     },
 
     verifySignature(request, response, next) {
-        if(request.body.signature && request.session.key) {
-            try {
-                const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
-                if(verified) {
-                    response.status(200).json({}).end();
-                    //next();
-                } else {
+        if(request.method !== 'GET') {
+            if(request.body.signature && request.session.key) {
+                try {
+                    const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
+                    if(verified) {
+                        response.status(200).json({}).end();
+                        //next();
+                    } else {
+                        next(new ApiError('Signature verification failed', 451));
+                    }
+                } catch (error) {
                     next(new ApiError('Signature verification failed', 451));
                 }
-            } catch (error) {
+            } else {
                 next(new ApiError('Signature verification failed', 451));
             }
         } else {
-            next(new ApiError('Signature verification failed', 451));
+            next();
         }
     }
 
