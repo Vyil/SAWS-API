@@ -102,7 +102,7 @@ module.exports = {
     },
 
     removeUUID(req,res){
-        let uuid = req.body.uuid;
+        let uuid = req.body.payload.uuid;
 
         User.findOne({uuid:uuid})
         .then(result=>{

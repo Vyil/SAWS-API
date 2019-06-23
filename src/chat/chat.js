@@ -33,11 +33,6 @@ module.exports = (io) => {
             certificate: uncorrectedCertificate
         };
 
-        //console.log('Stream: ' + stream);
-        //console.log('Username: ' + username);
-        //console.log('Signature: ' + signature);
-        //console.log('Certificate: ' + certificate);
-
         // Find the current certificate in the database
         Certificate.findOne({
             username: username,
@@ -57,7 +52,6 @@ module.exports = (io) => {
 
                     // Setup event when the client sends a new message
                     client.on('new-message', (msg) => {
-                        console.log('Message: ' + msg);
                         // Setup variables for later use
                         const newMessageUsername = msg.payload.username;
                         const newMessage = msg.payload.message;
@@ -150,5 +144,4 @@ module.exports = (io) => {
                 console.log(err)
             })
     }
-
-}
+};

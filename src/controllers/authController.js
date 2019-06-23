@@ -187,9 +187,11 @@ module.exports = {
             }
             let verified = auth.verifyHmac(request.body.payload, signature, key);
             if(verified) {
-                User.findOne({
+                User.findOneAndUpdate({
                     username: username,
                     password: password
+                }, {
+                    uuid: uuid
                 })
                     .then(result => {
                         if(result !== null) {
