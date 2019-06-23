@@ -16,20 +16,26 @@ module.exports = (io) => {
 
         // Setup variables for later use
         const query = client.handshake.query;
-        console.log(query);
-        const payload = query.payload;
-        const signature = query.signature;
-        console.dir(payload);
+        const stream = query.stream;
+        const username = query.username;
+        const certificate = query.certificate;
+        const signature = query.signature.replace(/#/g, '+').replace(/  |\r\n|\n|\r/gm, '') + '==';
+
+        // Construct the payload
+        const payload = {
+            stream: stream,
+            username: username,
+            certificate: certificate.replace(/#/g, '+').replace(/  |\r\n|\n|\r/gm, '')
+        };
+
         // Find the current certificate in the database
         Certificate.findOne({
             username: payload.username,
             certificate: payload.certificate
         }).then(result => {
-            console.log(result);
             if (result !== null) {
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
-                console.log('Found certificate');
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
                     // Increase the viewer count and print a console log
                     increaseViewer(payload.stream);
@@ -41,14 +47,18 @@ module.exports = (io) => {
                     // Setup event when the client sends a new message
                     client.on('new-message', (msg) => {
                         // Setup variables for later use
-                        const newMessagePayload = msg.payload;
+                        const newMessageUsername = msg.payload.username;
+                        const newMessage = msg.payload.message;
                         const newMessageSignature = msg.signature;
-                        console.log(msg);
+
+                        const payload = {
+                            username: newMessageUsername,
+                            message: newMessage
+                        };
                         // Verify the signature, save it to the database and broadcast the message to all listeners with a new signature
-                        if(auth.verifyDigitalSignature(newMessagePayload, newMessageSignature, publicKey)) {
-                            console.log('Verified');
+                        if(auth.verifyDigitalSignature(payload, newMessageSignature, publicKey)) {
                             saveMessageDB(payload.stream, msg);
-                            receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(newMessagePayload))
+                            receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(payload))
                         }
                     });
 
@@ -68,9 +78,11 @@ module.exports = (io) => {
     function increaseViewer(stream) {
         Streams.findOne({username: stream, live: true})
             .then((result) => {
-                result.viewers++;
-                result.save()
-                .then(()=> console.log('Viewercount increased'))
+                if(result !== null) {
+                    result.viewers++;
+                    result.save()
+                        .then(()=> console.log('Viewercount increased'))
+                }
             })
             .catch(err => {
                 console.log(err)
@@ -79,10 +91,12 @@ module.exports = (io) => {
 
     function decreaseViewer(stream) {
         Streams.findOne({username: stream, live: true})
-            .then((result) => {                
-                result.viewers--;
-                result.save()
-                .then(()=> console.log('Viewercount decreased'))
+            .then((result) => {
+                if(result !== null) {
+                    result.viewers--;
+                    result.save()
+                        .then(()=> console.log('Viewercount decreased'))
+                }
             })
             .catch(err => {
                 console.log(err)
@@ -103,10 +117,10 @@ module.exports = (io) => {
                 }                
             })
             .then(
-                User.findOne({ username: message.username })
+                User.findOne({ username: message.payload.username })
                 .then(result => {
                     newMessage = new Message({
-                        content: message.message,
+                        content: message.payload.message,
                         stream: streamID,
                         user: result._id
                     })

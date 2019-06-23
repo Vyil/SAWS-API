@@ -39,42 +39,47 @@ module.exports = {
     },
 
     setupInitialStream(req, res) {
-        let newStream = new Streams({
-            date: new Date(Date.now()),
-            live: true,
-            uuid: req.body.uuid,
-            username: ''
-        });
+        try {
+            let newStream = new Streams({
+                date: new Date(Date.now()),
+                live: true,
+                uuid: req.body.payload.uuid,
+                username: ''
+            });
 
-        User.findOne({ uuid: req.body.uuid })
-            .then(rslt => {
-                if (rslt.live) {
-                    res.status(500).json(new ApiError('User is already live!', 500)).end();
+            User.findOne({ uuid: req.body.payload.uuid })
+                .then(rslt => {
+                    if (rslt.live) {
+                        res.status(500).json(new ApiError('User is already live!', 500)).end();
+                        return;
+                    } else {
+                        newStream.username = rslt.username;
+                        rslt.live = true;
+                        Promise.all([
+                            rslt.save(),
+                            newStream.save()
+                        ])
+                            .then(result => {
+                                SatoshiController.startSatoshi(rslt.username);
+                                res.status(200).json(auth.buildResponse({ message: 'Stream created: ' + result })).end();
+                                return;
+                            })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json(new ApiError(err, 500)).end();
                     return;
-                } else {
-                    newStream.username = rslt.username;
-                    rslt.live = true;
-                    Promise.all([
-                        rslt.save(),
-                        newStream.save()
-                    ])
-                        .then(result => {
-                            SatoshiController.startSatoshi(rslt.username);
-                            res.status(200).json(auth.buildResponse({ message: 'Stream created: ' + result })).end();
-                            return;
-                        })
-                }
-            })
-            .catch(err => {
-                res.status(500).json(new ApiError(err, 500)).end();
-                return;
-            })
+                })
+        } catch(error) {
+            console.log(error);
+        }
     },
 
     closeStream(req, res) {
-        Streams.findOne({ uuid: req.body.uuid, live: true })
+        Streams.findOne({ uuid: req.body.payload.uuid, live: true })
             .then(result => {
-                User.findOne({ uuid: req.body.uuid })
+                User.findOne({ uuid: req.body.payload.uuid })
                     .then(rslt => {
                         rslt.live = false;
                         result.live = false;
