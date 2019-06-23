@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb+srv://sawsboss:saws@saws-ynno3.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true
 });
-mongoose.connection
+let connection = mongoose.connection
     .once('open',()=>{
         console.log(chalk.green('[MONGO] Database connected successfully'))})
     .on('error',(error)=>{
@@ -15,4 +15,4 @@ mongoose.connection
             console.log(chalk.red('[MONGO] Database error: ' + error));
     });
 
-module.exports = mongoose;
+module.exports = connection;

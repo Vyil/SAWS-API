@@ -1,4 +1,4 @@
-const mongoose = require('../database/mongodb')
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const streamSchema = new mongoose.Schema({

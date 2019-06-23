@@ -1,75 +1,37 @@
-const mongoose =require('mongoose')
-const chai = require('chai')
-const chaiHttp = require('chai-http')
-const server = require('../server')
-const User =  require('../models/user')
-const should = chai.should()
+const mongoose = require('mongoose');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const server = require('../src/server');
+const User =  require('../src/models/user');
+const should = chai.should();
 
-chai.use(chaiHttp)
+chai.use(chaiHttp);
 
 describe('User controller test', ()=>{
-    it('it should create a user',(done)=>{
-        const user = new User({
-            username: 'Admin',
-            password: 'admin',
-            firstname: 'Hanz',
-            lastname: 'de Admin'
-        })
-
-        chai.request(server)
-            .post('/register')
-            .send(user)
-            .end((err, res)=>{
-                res.should.have.status(200)
-                res.body.should.be.a('object')
-                res.body.should.have.property('username').eql('Admin')
-                res.body.should.have.property('password')
-                res.body.should.have.property('firstname').eql('Hanz')
-                res.body.should.have.property('lastname').eql('de Admin')
-                done()
-            })
-    }),
-
-    it('it should have a hashed password', (done)=>{
-        const user = new User({
-            username: 'Admin2',
-            password: 'admin',
-            firstname: 'Hanz',
-            lastname: 'de Admin'
-        })
-
-        var sha256 = function(password){
-            var hash = crypto.createHash('sha256');
-            hash.update(password);
-            var value = hash.digest('hex');
-            return {
-                passwordHash:value
-            };
-        };
-
-        function saltHashPassword(userpassword) {
-            const passwordData = sha256(userpassword).passwordHash;
-            passwordData.toString();
-            return passwordData;
-        }
-
-        chai.request(server)
-            .post('/register')
-            .send(user)
-            .end((res)=>{
-                res.should.have.status(200)
-                res.body.should.have.property('password').eql(saltHashPassword('admin'))
-                done()
-            })
-    }),
 
     it('it should get all users', (done)=>{
         chai.request(server)
-            .get('/user')
-            .end((res)=>{
-                res.should.have.status(200)
-                res.body.should.have.property()
+            .get('/api/user')
+            .end((err,res)=>{
+                //console.log(res)
+                res.should.have.status(200);
+                res.body.should.have.property('payload');
+                done()
             })
-    })
-})
+    });
 
+        it('it should get one users', (done)=>{
+            chai.request(server)
+                .get('/api/user?username=harm')
+                .end((err,res)=>{
+                    console.log(res);
+                    res.should.have.status(200);
+                    res.body.should.have.property('payload');
+                    res.body.payload.should.have.property('username').eql('harm');
+                    res.body.payload.should.have.property('firstname').eql('Harm');
+                    res.body.payload.should.have.property('lastname').eql('The Waterguy');
+                    res.body.payload.should.have.property('_id').eql('5d0b491fb65db30017570939');
+                    done()
+                })
+        });
+});
