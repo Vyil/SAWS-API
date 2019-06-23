@@ -129,6 +129,7 @@ module.exports = (io) => {
             .then(
                 User.findOne({ username: message.payload.username })
                 .then(result => {
+                    console.log(streamID);
                     newMessage = new Message({
                         content: message.payload.message,
                         stream: streamID,
