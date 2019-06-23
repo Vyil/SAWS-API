@@ -19,7 +19,7 @@ module.exports = (io) => {
         console.log(query);
         const payload = query.payload;
         const signature = query.signature;
-        console.log(payload);
+        console.dir(payload);
         // Find the current certificate in the database
         Certificate.findOne({
             username: payload.username,
