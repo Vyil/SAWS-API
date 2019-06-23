@@ -40,8 +40,8 @@ module.exports = (io) => {
 
         // Find the current certificate in the database
         Certificate.findOne({
-            username: payload.username,
-            certificate: payload.certificate
+            username: username,
+            certificate: certificate
         }).then(result => {
             if (result !== null) {
                 console.log(result);
@@ -85,7 +85,8 @@ module.exports = (io) => {
                 }
             }
         }).catch(err => {
-            next(new ApiError(err, 500));
+            console.log(err);
+            //next(new ApiError(err, 500));
         });
     });
 
