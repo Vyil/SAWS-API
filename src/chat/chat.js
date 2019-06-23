@@ -16,6 +16,7 @@ module.exports = (io) => {
 
         // Setup variables for later use
         const query = client.handshake.query;
+        console.log(query);
         const stream = query.stream;
         const username = query.username;
         const certificate = query.certificate;
