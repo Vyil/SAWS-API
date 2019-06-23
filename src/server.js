@@ -5,6 +5,7 @@ const session = require('express-session');
 const morgan = require('morgan');
 const cors = require('cors');
 const chalk = require('chalk');
+const mongo = require('./database/mongodb');
 
 // Importing routes
 const routes = require('./routes/routes');
