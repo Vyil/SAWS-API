@@ -67,7 +67,7 @@ module.exports = (io) => {
                         // Verify the signature, save it to the database and broadcast the message to all listeners with a new signature
                         if(auth.verifyDigitalSignature(newMessagePayload, newMessageSignature, publicKey)) {
                             saveMessageDB(stream, msg);
-                            receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(payload))
+                            receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(newMessagePayload))
                         }
                     });
 
@@ -120,23 +120,20 @@ module.exports = (io) => {
         let streamID;
         Streams.findOne({ username: stream, live:true })
             .then(rslt => {
-                console.log('RsltValue: '+JSON.stringify(rslt))
+                //console.log('RsltValue: '+JSON.stringify(rslt))
                 if(!rslt){
                     return;
                 } else {
-                    console.log(rslt);
                     streamID = rslt._id;
-                    console.log(streamID);
                 }                
             })
             .then(
                 User.findOne({ username: message.payload.username })
                 .then(result => {
-                    console.log(streamID);
                     newMessage = new Message({
                         content: message.payload.message,
                         stream: new ObjectId(streamID),
-                        user: result._id
+                        user: new ObjectId(result._id)
                     });
                     newMessage.save()
                         .then(rt => {})
