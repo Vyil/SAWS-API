@@ -101,7 +101,7 @@ module.exports = {
         }
     },
 
-    removeUUID(req,res){
+    removeUUID(req,res, next){
         let uuid = req.body.payload.uuid;
 
         User.findOne({uuid:uuid})
