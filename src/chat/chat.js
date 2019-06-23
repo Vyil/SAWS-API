@@ -16,6 +16,7 @@ module.exports = (io) => {
 
         // Setup variables for later use
         const query = client.handshake.query;
+        console.log(query);
         const payload = query.payload;
         const signature = query.signature;
 
@@ -27,7 +28,7 @@ module.exports = (io) => {
             if (result !== null) {
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
-
+                console.log('Found certificate');
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
                     // Increase the viewer count and print a console log
                     increaseViewer(payload.stream);
@@ -41,8 +42,10 @@ module.exports = (io) => {
                         // Setup variables for later use
                         const newMessagePayload = msg.payload;
                         const newMessageSignature = msg.signature;
+                        console.log(msg);
                         // Verify the signature, save it to the database and broadcast the message to all listeners with a new signature
                         if(auth.verifyDigitalSignature(newMessagePayload, newMessageSignature, publicKey)) {
+                            console.log('Verified');
                             saveMessageDB(payload.stream, msg);
                             receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(newMessagePayload))
                         }
