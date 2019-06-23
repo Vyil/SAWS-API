@@ -132,7 +132,7 @@ module.exports = (io) => {
                     console.log(streamID);
                     newMessage = new Message({
                         content: message.payload.message,
-                        stream: streamID,
+                        stream: new ObjectId(streamID),
                         user: result._id
                     });
                     newMessage.save()
