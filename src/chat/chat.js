@@ -41,8 +41,10 @@ module.exports = (io) => {
                         // Setup variables for later use
                         const newMessagePayload = msg.payload;
                         const newMessageSignature = msg.signature;
+                        console.log(msg);
                         // Verify the signature, save it to the database and broadcast the message to all listeners with a new signature
                         if(auth.verifyDigitalSignature(newMessagePayload, newMessageSignature, publicKey)) {
+                            console.log('Verified');
                             saveMessageDB(payload.stream, msg);
                             receivedPath.to(client.handshake.query.stream).emit('MESSAGE', auth.buildResponse(newMessagePayload))
                         }
