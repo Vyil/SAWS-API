@@ -345,11 +345,9 @@ module.exports = {
     },
 
     verifySignature(request, response, next) {
-        console.log(request.sessionID);
         if(request.method !== 'GET') {
             if(request.body.signature && request.session.publicKey) {
                 try {
-                    console.log('here');
                     const verified = auth.verifyDigitalSignature(request.body.payload, request.body.signature, pki.publicKeyFromPem(request.session.key));
                     if(verified) {
                         response.status(200).json({}).end();
@@ -366,11 +364,6 @@ module.exports = {
         } else {
             next();
         }
-    },
-
-    ping(request, response, next) {
-        //request.session.save();
-        response.status(200).json({}).end();
     }
 
     /*,test(request, response, next) {

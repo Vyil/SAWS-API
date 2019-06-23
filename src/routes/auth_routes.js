@@ -13,15 +13,13 @@ router.post('/loginhash',authController.loginHash);
 router.post('/auth', authController.authenticateNewDevice);
 // Login authenticated device using certificate
 router.put('/auth', authController.loginDevice);
-// Request ping
-router.get('/auth', authController.ping);
 // Route for destroying the session and certificate in case it becomes compromised
 //router.delete('/auth', authController.compromise);
 // ---------------------------------------------------------
 //router.post('/test', authController.test);
 // Verification paths
-router.all('*', authController.verifySignature);
-router.all('*', authController.validateToken);
+//router.all('*', authController.verifySignature);
+//router.all('*', authController.validateToken);
 
 // Test Verification paths
 //router.all('/signature', authController.verifySignature);
