@@ -1,7 +1,7 @@
 const auth = require('../authentication/authentication');
 const ApiError = require('../models/ApiError');
 const User = require('../models/user');
-const config = require('../authentication/config');
+const config = require('../config/config');
 const crypto = require('crypto');
 
 const privateKey = config.privateKey;
