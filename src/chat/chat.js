@@ -19,12 +19,13 @@ module.exports = (io) => {
         console.log(query);
         const payload = query.payload;
         const signature = query.signature;
-
+        console.log(payload);
         // Find the current certificate in the database
         Certificate.findOne({
             username: payload.username,
             certificate: payload.certificate
         }).then(result => {
+            console.log(result);
             if (result !== null) {
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
