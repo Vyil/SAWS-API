@@ -21,7 +21,10 @@ const io = require('socket.io')(http);
 require('./chat/chat')(io);
 
 app.use(session({
-    secret: "C06429E74D0E5ABDB5"
+    secret: "C06429E74D0E5ABDB5",
+    resave: true,
+    secure: false,
+    saveUninitialized: true
 }));
 
 // bodyParser parses the body from a request

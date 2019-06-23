@@ -330,6 +330,7 @@ module.exports = {
 
     validateToken(request, response, next) {
         console.log(request.sessionID);
+        request.session.save();
         console.log(chalk.yellow('[TOKEN] Validation of JWT token requested'));
         const token = request.header('x-access-token') || '';
 
