@@ -33,10 +33,10 @@ module.exports = (io) => {
             certificate: uncorrectedCertificate
         };
 
-        console.log('Stream: ' + stream);
-        console.log('Username: ' + username);
-        console.log('Signature: ' + signature);
-        console.log('Certificate: ' + certificate);
+        //console.log('Stream: ' + stream);
+        //console.log('Username: ' + username);
+        //console.log('Signature: ' + signature);
+        //console.log('Certificate: ' + certificate);
 
         // Find the current certificate in the database
         Certificate.findOne({
@@ -44,7 +44,6 @@ module.exports = (io) => {
             certificate: certificate
         }).then(result => {
             if (result !== null) {
-                console.log(result);
                 // Setting up public key of client for later use
                 const publicKey = pki.publicKeyFromPem(result.publicKey);
                 if(auth.verifyDigitalSignature(payload, signature, publicKey)) {
@@ -58,6 +57,7 @@ module.exports = (io) => {
 
                     // Setup event when the client sends a new message
                     client.on('new-message', (msg) => {
+                        console.log('Message: ' + msg);
                         // Setup variables for later use
                         const newMessageUsername = msg.payload.username;
                         const newMessage = msg.payload.message;
